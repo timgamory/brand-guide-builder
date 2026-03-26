@@ -4,6 +4,7 @@ import { useBrandGuideStore } from '../stores/brandGuideStore'
 import { useReflectionStore } from '../stores/reflectionStore'
 import { SECTIONS } from '../data/sections'
 import { downloadMarkdown, downloadDocx, downloadReflectionMarkdown } from '../services/documentGenerator'
+import { checkConsistency, type ConsistencyResult } from '../services/consistencyCheck'
 
 const SECTION_TITLES: Record<string, string> = {
   basics: 'Introduction',
@@ -25,6 +26,20 @@ export function GuidePreview() {
   const [reviewUrl, setReviewUrl] = useState<string | null>(
     session?.reviewToken ? `${window.location.origin}/review/${session.reviewToken}` : null
   )
+  const [consistencyResult, setConsistencyResult] = useState<ConsistencyResult | null>(null)
+  const [isChecking, setIsChecking] = useState(false)
+
+  const handleCheckConsistency = async () => {
+    if (!session) return
+    setIsChecking(true)
+    try {
+      const result = await checkConsistency(session)
+      setConsistencyResult(result)
+    } catch {
+      // Silently fail
+    }
+    setIsChecking(false)
+  }
 
   if (!session) {
     navigate('/')
@@ -68,6 +83,15 @@ export function GuidePreview() {
             >
               Back to Wizard
             </button>
+            {approvedSections.length >= 3 && (
+              <button
+                onClick={handleCheckConsistency}
+                disabled={isChecking}
+                className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text text-sm font-medium hover:bg-brand-bg transition-colors disabled:opacity-50"
+              >
+                {isChecking ? 'Checking...' : 'Check Consistency'}
+              </button>
+            )}
             <button
               onClick={() => downloadMarkdown(session)}
               className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text text-sm font-medium hover:bg-brand-bg transition-colors"
@@ -118,6 +142,37 @@ export function GuidePreview() {
                   </button>
                 </div>
               </div>
+            )}
+          </div>
+        )}
+
+        {consistencyResult && (
+          <div className={`rounded-2xl border p-6 mb-6 ${
+            consistencyResult.verdict === 'consistent'
+              ? 'bg-emerald-50 border-emerald-200'
+              : 'bg-amber-50 border-amber-200'
+          }`}>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-heading text-lg font-semibold text-brand-text">
+                {consistencyResult.verdict === 'consistent' ? 'Looking Good' : 'Consistency Notes'}
+              </h3>
+              <button
+                onClick={() => setConsistencyResult(null)}
+                className="text-brand-text-faint hover:text-brand-text text-sm"
+              >
+                Dismiss
+              </button>
+            </div>
+            {consistencyResult.verdict === 'consistent' ? (
+              <p className="text-[15px] text-brand-text-secondary">Your brand guide is internally consistent across all sections.</p>
+            ) : (
+              <ul className="space-y-2">
+                {consistencyResult.issues.map((issue, i) => (
+                  <li key={i} className="text-[15px] text-brand-text-secondary">
+                    <span className="font-medium">{issue.sections.join(' / ')}:</span> {issue.description}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         )}
