@@ -42,7 +42,7 @@ export function Sidebar() {
             key={section.id}
             onClick={() => handleClick(section.id)}
             className={cn(
-              'block w-full text-left px-5 py-2.5 border-l-[3px] transition-all font-body text-[13px]',
+              'block w-full text-left px-5 py-2.5 border-l-[3px] transition-all font-body text-[13px] cursor-pointer',
               isActive
                 ? 'bg-white border-brand-primary font-semibold text-brand-text'
                 : 'border-transparent text-brand-text-muted hover:text-brand-text hover:bg-white/50'
