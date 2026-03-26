@@ -69,6 +69,22 @@ async function deleteSession(id: string): Promise<void> {
   })
 }
 
+async function getReflections(sessionId: string): Promise<Reflections | undefined> {
+  return db.reflections.get(sessionId)
+}
+
+async function saveReflection(sessionId: string, sectionId: string, text: string): Promise<void> {
+  const existing = await db.reflections.get(sessionId)
+  const entry = { sectionId, text, timestamp: new Date().toISOString() }
+  if (existing) {
+    const entries = existing.entries.filter(e => e.sectionId !== sectionId)
+    entries.push(entry)
+    await db.reflections.update(sessionId, { entries })
+  } else {
+    await db.reflections.add({ id: sessionId, entries: [entry] })
+  }
+}
+
 async function getConversation(sessionId: string, sectionId: string): Promise<Conversation | undefined> {
   return db.conversations.get(`${sessionId}:${sectionId}`)
 }
@@ -85,6 +101,8 @@ export {
   updateSession,
   listSessions,
   deleteSession,
+  getReflections,
+  saveReflection,
   getConversation,
   saveConversation,
 }
