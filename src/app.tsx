@@ -3,6 +3,7 @@ import { PathSelection } from './pages/PathSelection'
 import { ApiKeySetup } from './pages/ApiKeySetup'
 import { WizardShell } from './components/layout/WizardShell'
 import { WizardSection } from './pages/WizardSection'
+import { GuidePreview } from './pages/GuidePreview'
 
 function Placeholder({ name }: { name: string }) {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route index element={<WizardSection />} />
         <Route path=":sectionId" element={<WizardSection />} />
       </Route>
+      <Route path="/preview" element={<GuidePreview />} />
       <Route path="/review/:token" element={<Placeholder name="Fellow Review" />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
