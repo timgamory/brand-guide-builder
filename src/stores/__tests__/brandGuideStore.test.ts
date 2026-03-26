@@ -1,10 +1,42 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+// Mock storage before importing store
+vi.mock('../../services/storage', () => {
+  let sessions: Record<string, unknown> = {}
+  return {
+    createSession: vi.fn(async (path: string) => {
+      const session = {
+        id: crypto.randomUUID(),
+        path,
+        brandData: {},
+        sections: {
+          basics: { status: 'not_started', approvedDraft: null, reviewFeedback: null },
+          story: { status: 'not_started', approvedDraft: null, reviewFeedback: null },
+        },
+        currentSection: 'basics',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+      sessions[session.id] = session
+      return session
+    }),
+    getSession: vi.fn(async (id: string) => sessions[id]),
+    updateSession: vi.fn(async (id: string, updates: Record<string, unknown>) => {
+      const existing = sessions[id] as Record<string, unknown>
+      if (existing) sessions[id] = { ...existing, ...updates, updatedAt: new Date().toISOString() }
+    }),
+    listSessions: vi.fn(async () => Object.values(sessions)),
+    deleteSession: vi.fn(async (id: string) => { delete sessions[id] }),
+    _reset: () => { sessions = {} },
+  }
+})
+
 import { useBrandGuideStore } from '../brandGuideStore'
-import { db } from '../../services/storage'
+import * as storage from '../../services/storage'
 
 describe('brandGuideStore', () => {
-  beforeEach(async () => {
-    await db.sessions.clear()
+  beforeEach(() => {
+    (storage as unknown as { _reset: () => void })._reset()
     useBrandGuideStore.getState().reset()
   })
 

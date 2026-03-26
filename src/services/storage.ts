@@ -1,20 +1,6 @@
-import Dexie, { type EntityTable } from 'dexie'
+import { supabase } from './supabase'
 import type { Session, Conversation, Reflections, Review, ReviewStatus } from '../types'
 import { SECTIONS } from '../data/sections'
-
-const db = new Dexie('BrandGuideBuilder') as Dexie & {
-  sessions: EntityTable<Session, 'id'>
-  conversations: EntityTable<Conversation, 'id'>
-  reflections: EntityTable<Reflections, 'id'>
-  reviews: EntityTable<Review, 'id'>
-}
-
-db.version(1).stores({
-  sessions: 'id, path, updatedAt',
-  conversations: 'id',
-  reflections: 'id',
-  reviews: 'id',
-})
 
 function generateId(): string {
   return crypto.randomUUID()
@@ -32,86 +18,213 @@ function buildInitialSections(): Session['sections'] {
   return sections
 }
 
+// Supabase stores snake_case columns, app uses camelCase types.
+// These helpers convert between the two.
+
+function sessionFromRow(row: Record<string, unknown>): Session {
+  return {
+    id: row.id as string,
+    path: row.path as Session['path'],
+    brandData: (row.brand_data ?? {}) as Session['brandData'],
+    sections: (row.sections ?? {}) as Session['sections'],
+    currentSection: row.current_section as string,
+    internMeta: row.intern_meta as Session['internMeta'],
+    reviewToken: row.review_token as string | undefined,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  }
+}
+
+function sessionToRow(session: Partial<Session> & { id?: string }) {
+  const row: Record<string, unknown> = {}
+  if (session.id !== undefined) row.id = session.id
+  if (session.path !== undefined) row.path = session.path
+  if (session.brandData !== undefined) row.brand_data = session.brandData
+  if (session.sections !== undefined) row.sections = session.sections
+  if (session.currentSection !== undefined) row.current_section = session.currentSection
+  if (session.internMeta !== undefined) row.intern_meta = session.internMeta
+  if (session.reviewToken !== undefined) row.review_token = session.reviewToken
+  return row
+}
+
+function conversationFromRow(row: Record<string, unknown>): Conversation {
+  return {
+    id: row.id as string,
+    messages: (row.messages ?? []) as Conversation['messages'],
+    researchTasks: row.research_tasks as Conversation['researchTasks'],
+    conversationSummary: row.conversation_summary as string | undefined,
+    summarizedAtCount: row.summarized_at_count as number | undefined,
+  }
+}
+
+function conversationToRow(id: string, convo: Omit<Conversation, 'id'>) {
+  return {
+    id,
+    messages: convo.messages,
+    research_tasks: convo.researchTasks,
+    conversation_summary: convo.conversationSummary,
+    summarized_at_count: convo.summarizedAtCount,
+  }
+}
+
+// === Sessions ===
+
 async function createSession(path: Session['path']): Promise<Session> {
-  const now = new Date().toISOString()
   const session: Session = {
     id: generateId(),
     path,
     brandData: {},
     sections: buildInitialSections(),
     currentSection: 'basics',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   }
-  await db.sessions.add(session)
+
+  const { error } = await supabase.from('sessions').insert({
+    id: session.id,
+    path: session.path,
+    brand_data: session.brandData,
+    sections: session.sections,
+    current_section: session.currentSection,
+  })
+
+  if (error) throw new Error(`Failed to create session: ${error.message}`)
   return session
 }
 
 async function getSession(id: string): Promise<Session | undefined> {
-  return db.sessions.get(id)
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error || !data) return undefined
+  return sessionFromRow(data)
 }
 
 async function updateSession(id: string, updates: Partial<Omit<Session, 'id' | 'createdAt'>>): Promise<void> {
-  await db.sessions.update(id, { ...updates, updatedAt: new Date().toISOString() })
+  const row = sessionToRow(updates)
+  row.updated_at = new Date().toISOString()
+
+  const { error } = await supabase
+    .from('sessions')
+    .update(row)
+    .eq('id', id)
+
+  if (error) throw new Error(`Failed to update session: ${error.message}`)
 }
 
 async function listSessions(): Promise<Session[]> {
-  return db.sessions.orderBy('updatedAt').reverse().toArray()
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('*')
+    .order('updated_at', { ascending: false })
+
+  if (error) throw new Error(`Failed to list sessions: ${error.message}`)
+  return (data ?? []).map(sessionFromRow)
 }
 
 async function deleteSession(id: string): Promise<void> {
-  await db.transaction('rw', [db.sessions, db.conversations, db.reflections, db.reviews], async () => {
-    await db.sessions.delete(id)
-    const convos = await db.conversations.where('id').startsWith(id).toArray()
-    await db.conversations.bulkDelete(convos.map(c => c.id))
-    await db.reflections.delete(id)
-    await db.reviews.delete(id)
-  })
+  // Delete related data first
+  const { data: convos } = await supabase
+    .from('conversations')
+    .select('id')
+    .like('id', `${id}:%`)
+
+  if (convos && convos.length > 0) {
+    await supabase
+      .from('conversations')
+      .delete()
+      .in('id', convos.map(c => c.id))
+  }
+
+  await supabase.from('reflections').delete().eq('id', id)
+  await supabase.from('reviews').delete().eq('id', id)
+  await supabase.from('sessions').delete().eq('id', id)
 }
 
+// === Reflections ===
+
 async function getReflections(sessionId: string): Promise<Reflections | undefined> {
-  return db.reflections.get(sessionId)
+  const { data, error } = await supabase
+    .from('reflections')
+    .select('*')
+    .eq('id', sessionId)
+    .single()
+
+  if (error || !data) return undefined
+  return { id: data.id, entries: data.entries ?? [] }
 }
 
 async function saveReflection(sessionId: string, sectionId: string, text: string): Promise<void> {
-  const existing = await db.reflections.get(sessionId)
+  const existing = await getReflections(sessionId)
   const entry = { sectionId, text, timestamp: new Date().toISOString() }
+
   if (existing) {
     const entries = existing.entries.filter(e => e.sectionId !== sectionId)
     entries.push(entry)
-    await db.reflections.update(sessionId, { entries })
+    await supabase.from('reflections').update({ entries }).eq('id', sessionId)
   } else {
-    await db.reflections.add({ id: sessionId, entries: [entry] })
+    await supabase.from('reflections').insert({ id: sessionId, entries: [entry] })
   }
 }
 
+// === Reviews ===
+
 async function getReview(sessionId: string): Promise<Review | undefined> {
-  return db.reviews.get(sessionId)
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('id', sessionId)
+    .single()
+
+  if (error || !data) return undefined
+  return { id: data.id, sections: data.sections ?? {} }
 }
 
 async function saveReviewStatus(sessionId: string, sectionId: string, status: ReviewStatus, notes?: string): Promise<void> {
-  const existing = await db.reviews.get(sessionId)
+  const existing = await getReview(sessionId)
   const sectionState = { status, notes, reviewedAt: new Date().toISOString() }
+
   if (existing) {
-    await db.reviews.update(sessionId, {
-      sections: { ...existing.sections, [sectionId]: sectionState }
-    })
+    await supabase
+      .from('reviews')
+      .update({ sections: { ...existing.sections, [sectionId]: sectionState } })
+      .eq('id', sessionId)
   } else {
-    await db.reviews.add({ id: sessionId, sections: { [sectionId]: sectionState } })
+    await supabase
+      .from('reviews')
+      .insert({ id: sessionId, sections: { [sectionId]: sectionState } })
   }
 }
 
+// === Conversations ===
+
 async function getConversation(sessionId: string, sectionId: string): Promise<Conversation | undefined> {
-  return db.conversations.get(`${sessionId}:${sectionId}`)
+  const id = `${sessionId}:${sectionId}`
+  const { data, error } = await supabase
+    .from('conversations')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error || !data) return undefined
+  return conversationFromRow(data)
 }
 
 async function saveConversation(sessionId: string, sectionId: string, conversation: Omit<Conversation, 'id'>): Promise<void> {
   const id = `${sessionId}:${sectionId}`
-  await db.conversations.put({ ...conversation, id })
+  const row = conversationToRow(id, conversation)
+
+  const { error } = await supabase
+    .from('conversations')
+    .upsert(row)
+
+  if (error) throw new Error(`Failed to save conversation: ${error.message}`)
 }
 
 export {
-  db,
   createSession,
   getSession,
   updateSession,
