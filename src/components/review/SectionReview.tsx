@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import type { SectionReviewResponse } from '../../types'
 
-export function SectionReview({ review, onApprove, onRevise, onStartOver, disableApprove = false }: {
+export function SectionReview({ review, onApprove, onRevise, disableApprove = false }: {
   review: SectionReviewResponse
   onApprove: (draft: string) => void
   onRevise: (direction: string) => void
-  onStartOver: () => void
   disableApprove?: boolean
 }) {
   const [editedDraft, setEditedDraft] = useState(review.draft)
@@ -101,12 +100,6 @@ export function SectionReview({ review, onApprove, onRevise, onStartOver, disabl
             Ask AI to Revise
           </button>
         )}
-        <button
-          onClick={onStartOver}
-          className="px-6 py-3 rounded-xl text-brand-text-muted text-[15px] hover:text-brand-text transition-colors"
-        >
-          Start Over
-        </button>
       </div>
     </div>
   )

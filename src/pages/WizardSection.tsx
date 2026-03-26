@@ -180,6 +180,12 @@ export function WizardSection() {
     }
   }, [clearConversation, isIntern, session, sectionId])
 
+  const handleRefine = useCallback(async () => {
+    if (!sectionId) return
+    await updateSectionStatus(sectionId, 'in_progress')
+    setMode(isIntern ? 'synthesis' : 'interview')
+  }, [sectionId, updateSectionStatus, isIntern])
+
   const handleSkip = useCallback(async () => {
     if (!sectionId) return
     await useBrandGuideStore.getState().skipSection(sectionId)
@@ -231,7 +237,39 @@ export function WizardSection() {
 
       {/* Content area */}
       <div className="flex-1 overflow-hidden">
-        {mode === 'research' ? (
+        {session.sections[sectionId ?? '']?.status === 'approved' && mode !== 'review' ? (
+          <div className="overflow-y-auto h-full">
+            <div className="max-w-2xl mx-auto p-6 space-y-6">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
+                <span>&#10003;</span> This section has been approved.
+              </div>
+              <div className="bg-white rounded-2xl border border-brand-border p-6">
+                <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Approved Draft</h3>
+                <div className="text-[15px] leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
+                  {session.sections[sectionId ?? '']?.approvedDraft}
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={handleRefine}
+                  className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
+                >
+                  Refine this section
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm('Start over from scratch? This will clear all conversation history for this section.')) {
+                      handleStartOver()
+                    }
+                  }}
+                  className="text-sm text-red-400 hover:text-red-600 transition-colors"
+                >
+                  Start over
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : mode === 'research' ? (
           <div className="overflow-y-auto h-full">
             <TaskList
               tasks={researchTasks}
@@ -246,7 +284,6 @@ export function WizardSection() {
               review={review}
               onApprove={handleApprove}
               onRevise={handleRevise}
-              onStartOver={handleStartOver}
               disableApprove={isIntern && !reflectionText.trim()}
             />
             {isIntern && sectionId && (

@@ -20,6 +20,7 @@ type BrandGuideState = {
   setInternMeta: (meta: InternMeta) => Promise<void>
   skipSection: (sectionId: string) => Promise<void>
   submitForReview: () => Promise<string | undefined>
+  loadMostRecentSession: () => Promise<void>
 }
 
 export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
@@ -130,5 +131,17 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     await updateSession(session.id, { reviewToken })
     set({ session: { ...session, reviewToken, updatedAt: new Date().toISOString() } })
     return reviewToken
+  },
+
+  loadMostRecentSession: async () => {
+    const { session } = get()
+    if (session) return
+    set({ isLoading: true })
+    const sessions = await listSessions()
+    if (sessions.length > 0) {
+      set({ session: sessions[0], sessions, isLoading: false })
+    } else {
+      set({ isLoading: false })
+    }
   },
 }))
