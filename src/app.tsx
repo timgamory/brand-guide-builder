@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { PathSelection } from './pages/PathSelection'
 import { ApiKeySetup } from './pages/ApiKeySetup'
 import { WizardShell } from './components/layout/WizardShell'
+import { WizardSection } from './pages/WizardSection'
 
 function Placeholder({ name }: { name: string }) {
   return (
@@ -17,8 +18,8 @@ export default function App() {
       <Route path="/" element={<PathSelection />} />
       <Route path="/setup" element={<ApiKeySetup />} />
       <Route path="/wizard" element={<WizardShell />}>
-        <Route index element={<Placeholder name="Select a section" />} />
-        <Route path=":sectionId" element={<Placeholder name="Section Content" />} />
+        <Route index element={<WizardSection />} />
+        <Route path=":sectionId" element={<WizardSection />} />
       </Route>
       <Route path="/review/:token" element={<Placeholder name="Fellow Review" />} />
       <Route path="*" element={<Navigate to="/" replace />} />
