@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
+import { getUserSlug, setUserSlug } from '../services/userSlug'
 import type { Path, Session } from '../types'
 
 function PathCard({
@@ -53,10 +54,21 @@ export function PathSelection() {
   const navigate = useNavigate()
   const { createNewSession, loadSession, loadSessions, deleteSessionById, sessions } = useBrandGuideStore()
   const [loaded, setLoaded] = useState(false)
+  const [slug, setSlug] = useState<string | null>(getUserSlug())
+  const [nameInput, setNameInput] = useState('')
 
   useEffect(() => {
-    loadSessions().then(() => setLoaded(true))
-  }, [loadSessions])
+    if (slug) {
+      loadSessions().then(() => setLoaded(true))
+    }
+  }, [slug, loadSessions])
+
+  const handleSetName = () => {
+    const trimmed = nameInput.trim().toLowerCase().replace(/\s+/g, '-')
+    if (!trimmed) return
+    setUserSlug(trimmed)
+    setSlug(trimmed)
+  }
 
   const handleSelect = async (path: Path) => {
     await createNewSession(path)
@@ -77,6 +89,40 @@ export function PathSelection() {
     if (window.confirm('Delete this session? This cannot be undone.')) {
       await deleteSessionById(id)
     }
+  }
+
+  if (!slug) {
+    return (
+      <div className="min-h-screen bg-brand-bg font-body flex flex-col items-center justify-center p-8">
+        <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-8 max-w-sm w-full space-y-6">
+          <div className="text-center">
+            <h1 className="font-heading text-2xl font-bold text-brand-text mb-2">Brand Guide Builder</h1>
+            <p className="text-brand-text-muted text-[15px]">Enter your name to get started.</p>
+          </div>
+          <div>
+            <input
+              value={nameInput}
+              onChange={e => setNameInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleSetName() }}
+              placeholder="e.g. Jordan"
+              className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+            />
+          </div>
+          <button
+            onClick={handleSetName}
+            disabled={!nameInput.trim()}
+            className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Continue
+          </button>
+        </div>
+        <footer className="mt-12 text-center">
+          <a href="https://elevatedigital.nyc" target="_blank" rel="noopener noreferrer" className="text-brand-text-faint text-xs hover:text-brand-text-muted transition-colors">
+            Built by Elevate Digital
+          </a>
+        </footer>
+      </div>
+    )
   }
 
   if (!loaded) return null
