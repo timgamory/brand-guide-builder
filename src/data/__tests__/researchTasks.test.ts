@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { getResearchTasks, RESEARCH_TASKS } from '../researchTasks'
+import { ALL_SECTION_IDS } from '../sections'
 
 describe('researchTasks', () => {
   it('returns tasks for story section', () => {
@@ -31,5 +32,12 @@ describe('researchTasks', () => {
     const storyTasks = getResearchTasks('story')
     const personalityTasks = getResearchTasks('personality')
     expect(storyTasks.length).toBeGreaterThanOrEqual(personalityTasks.length)
+  })
+
+  it('has research tasks for all sections', () => {
+    for (const id of ALL_SECTION_IDS) {
+      const tasks = getResearchTasks(id)
+      expect(tasks.length, `Missing research tasks for ${id}`).toBeGreaterThanOrEqual(2)
+    }
   })
 })

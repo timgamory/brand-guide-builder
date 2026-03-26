@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { buildSystemPrompt, getOpener } from '../prompts/builder'
+import { getSectionPrompt } from '../prompts/sections'
+import { ALL_SECTION_IDS } from '../../data/sections'
 import type { Session } from '../../types'
 
 function makeSession(overrides: Partial<Session> = {}): Session {
@@ -65,5 +67,29 @@ describe('getOpener', () => {
   it('returns fallback for unknown section', () => {
     const opener = getOpener(makeSession(), 'unknown_section')
     expect(opener).toContain('Tell me what you know')
+  })
+})
+
+describe('section prompt coverage', () => {
+  it('has entrepreneur prompts for all sections', () => {
+    for (const id of ALL_SECTION_IDS) {
+      const prompt = getSectionPrompt(id, 'entrepreneur')
+      expect(prompt, `Missing entrepreneur prompt for ${id}`).toBeDefined()
+      expect(prompt!.goal).toBeTruthy()
+      expect(prompt!.opener).toBeTruthy()
+      expect(prompt!.fields.length).toBeGreaterThan(0)
+      expect(prompt!.reviewInstruction).toBeTruthy()
+    }
+  })
+
+  it('has intern prompts for all sections', () => {
+    for (const id of ALL_SECTION_IDS) {
+      const prompt = getSectionPrompt(id, 'intern')
+      expect(prompt, `Missing intern prompt for ${id}`).toBeDefined()
+      expect(prompt!.goal).toBeTruthy()
+      expect(prompt!.opener).toBeTruthy()
+      expect(prompt!.fields.length).toBeGreaterThan(0)
+      expect(prompt!.reviewInstruction).toBeTruthy()
+    }
   })
 })
