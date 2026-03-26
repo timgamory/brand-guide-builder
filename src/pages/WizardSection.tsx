@@ -2,13 +2,17 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
 import { useConversationStore } from '../stores/conversationStore'
+import { useReflectionStore } from '../stores/reflectionStore'
 import { getSection } from '../data/sections'
+import { getResearchTasks } from '../data/researchTasks'
 import { buildSystemPrompt, getOpener } from '../services/prompts/builder'
 import { sendMessage, parseSectionReview } from '../services/ai'
 import { ChatWindow } from '../components/chat/ChatWindow'
 import { SectionReview } from '../components/review/SectionReview'
 import { FallbackForm } from '../components/shared/FallbackForm'
-import type { Message, SectionReviewResponse, EntrepreneurMode } from '../types'
+import { TaskList } from '../components/research/TaskList'
+import { ReflectionPrompt } from '../components/reflection/ReflectionPrompt'
+import type { Message, SectionReviewResponse, WizardMode } from '../types'
 
 export function WizardSection() {
   const { sectionId } = useParams<{ sectionId: string }>()
@@ -18,30 +22,67 @@ export function WizardSection() {
   const approveSectionDraft = useBrandGuideStore(s => s.approveSectionDraft)
   const updateSectionStatus = useBrandGuideStore(s => s.updateSectionStatus)
 
-  const { messages, isStreaming, loadConversation, addMessage, setStreaming, clearConversation } = useConversationStore()
+  const { messages, isStreaming, loadConversation, addMessage, setStreaming, clearConversation, researchTasks } = useConversationStore()
 
-  const [mode, setMode] = useState<EntrepreneurMode | 'fallback'>('interview')
+  const isIntern = session?.path === 'intern'
+
+  const [mode, setMode] = useState<WizardMode>(isIntern ? 'research' : 'interview')
   const [streamingContent, setStreamingContent] = useState<string | null>(null)
   const [review, setReview] = useState<SectionReviewResponse | null>(null)
   const [apiError, setApiError] = useState(false)
+  const [reflectionText, setReflectionText] = useState('')
 
   const section = sectionId ? getSection(sectionId) : undefined
 
-  // Load conversation when section changes
+  // Load conversation and intern-specific data when section changes
   useEffect(() => {
     if (!session || !sectionId) return
     loadConversation(session.id, sectionId)
     setReview(null)
-    setMode('interview')
     setApiError(false)
+
+    if (session.path === 'intern') {
+      setMode('research')
+      useConversationStore.getState().loadResearchTasks(session.id, sectionId, getResearchTasks(sectionId))
+      useReflectionStore.getState().loadReflections(session.id)
+      setReflectionText(useReflectionStore.getState().getReflection(sectionId) ?? '')
+    } else {
+      setMode('interview')
+    }
   }, [session?.id, sectionId, loadConversation])
 
-  // Send AI opener when entering a fresh section
+  // Load reflection text after reflections are loaded (async)
+  useEffect(() => {
+    if (!isIntern || !sectionId) return
+    const text = useReflectionStore.getState().getReflection(sectionId)
+    if (text) setReflectionText(text)
+  }, [isIntern, sectionId])
+
+  // Send AI opener when entering a fresh interview/synthesis section
   useEffect(() => {
     if (!session || !sectionId || messages.length > 0 || isStreaming) return
+    // Only send opener for interview mode (entrepreneur) or if in synthesis mode (intern)
+    if (mode !== 'interview' && mode !== 'synthesis') return
     const opener = getOpener(session, sectionId)
     addMessage({ role: 'assistant', content: opener })
-  }, [session, sectionId, messages.length, isStreaming, addMessage])
+  }, [session, sectionId, messages.length, isStreaming, addMessage, mode])
+
+  // Research mode handlers
+  const handleToggleTask = useCallback((taskId: string) => {
+    useConversationStore.getState().toggleTask(taskId)
+  }, [])
+
+  const handleUpdateTaskNotes = useCallback((taskId: string, notes: string) => {
+    useConversationStore.getState().updateTaskNotes(taskId, notes)
+  }, [])
+
+  const handleProceed = useCallback(async () => {
+    if (!session || !sectionId) return
+    // Switch to synthesis mode and send AI opener
+    setMode('synthesis')
+    // Clear existing messages for a fresh synthesis conversation
+    await clearConversation()
+  }, [session, sectionId, clearConversation])
 
   const handleSend = useCallback(async (text: string) => {
     if (!session || !sectionId) return
@@ -54,7 +95,10 @@ export function WizardSection() {
     setStreamingContent('')
 
     try {
-      const systemPrompt = buildSystemPrompt(session, sectionId)
+      const currentResearchTasks = useConversationStore.getState().researchTasks
+      const systemPrompt = isIntern
+        ? buildSystemPrompt(session, sectionId, currentResearchTasks)
+        : buildSystemPrompt(session, sectionId)
       const allMessages = [...messages, userMsg]
       const response = await sendMessage(systemPrompt, allMessages, setStreamingContent)
 
@@ -80,28 +124,40 @@ export function WizardSection() {
       await addMessage({ role: 'assistant', content: "I'm having trouble connecting right now. You can continue filling in the fields manually, or try again in a moment." })
       setMode('fallback')
     }
-  }, [session, sectionId, messages, addMessage, setStreaming, updateSectionStatus])
+  }, [session, sectionId, messages, addMessage, setStreaming, updateSectionStatus, isIntern])
 
   const handleApprove = useCallback(async (draft: string) => {
     if (!sectionId) return
+    // Save reflection for intern path
+    if (isIntern && reflectionText.trim()) {
+      await useReflectionStore.getState().setReflection(sectionId, reflectionText.trim())
+    }
     await approveSectionDraft(sectionId, draft)
     const store = useBrandGuideStore.getState()
     await store.nextSection()
     const next = useBrandGuideStore.getState().session?.currentSection
     if (next) navigate(`/wizard/${next}`)
-  }, [sectionId, approveSectionDraft, navigate])
+  }, [sectionId, approveSectionDraft, navigate, isIntern, reflectionText])
 
   const handleRevise = useCallback(async (direction: string) => {
-    setMode('interview')
+    setMode(isIntern ? 'synthesis' : 'interview')
     setReview(null)
     await handleSend(`Please revise the draft: ${direction}`)
-  }, [handleSend])
+  }, [handleSend, isIntern])
 
   const handleStartOver = useCallback(async () => {
     await clearConversation()
     setReview(null)
-    setMode('interview')
-  }, [clearConversation])
+    if (isIntern) {
+      // For intern, go back to research phase
+      if (session && sectionId) {
+        await useConversationStore.getState().loadResearchTasks(session.id, sectionId, getResearchTasks(sectionId))
+      }
+      setMode('research')
+    } else {
+      setMode('interview')
+    }
+  }, [clearConversation, isIntern, session, sectionId])
 
   const handleFallbackChange = useCallback(async (key: string, value: string) => {
     await updateBrandData({ [key]: value })
@@ -129,7 +185,7 @@ export function WizardSection() {
         <div className="mx-6 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
           AI assistant is temporarily unavailable. You can continue filling in fields manually.
           <button
-            onClick={() => { setApiError(false); setMode('interview') }}
+            onClick={() => { setApiError(false); setMode(isIntern ? 'synthesis' : 'interview') }}
             className="ml-2 underline hover:no-underline"
           >
             Try again
@@ -139,14 +195,33 @@ export function WizardSection() {
 
       {/* Content area */}
       <div className="flex-1 overflow-hidden">
-        {mode === 'review' && review ? (
+        {mode === 'research' ? (
+          <div className="overflow-y-auto h-full">
+            <TaskList
+              tasks={researchTasks}
+              onToggle={handleToggleTask}
+              onNotesChange={handleUpdateTaskNotes}
+              onProceed={handleProceed}
+            />
+          </div>
+        ) : mode === 'review' && review ? (
           <div className="overflow-y-auto h-full">
             <SectionReview
               review={review}
               onApprove={handleApprove}
               onRevise={handleRevise}
               onStartOver={handleStartOver}
+              disableApprove={isIntern && !reflectionText.trim()}
             />
+            {isIntern && sectionId && (
+              <div className="max-w-2xl mx-auto px-6 pb-6">
+                <ReflectionPrompt
+                  sectionId={sectionId}
+                  value={reflectionText}
+                  onChange={setReflectionText}
+                />
+              </div>
+            )}
           </div>
         ) : mode === 'fallback' ? (
           <div className="overflow-y-auto h-full">
@@ -157,6 +232,7 @@ export function WizardSection() {
             />
           </div>
         ) : (
+          // interview or synthesis mode — both use ChatWindow
           <ChatWindow
             messages={messages}
             streamingContent={streamingContent}

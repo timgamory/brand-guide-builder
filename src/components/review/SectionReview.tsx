@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { SectionReviewResponse } from '../../types'
 
-export function SectionReview({ review, onApprove, onRevise, onStartOver }: {
+export function SectionReview({ review, onApprove, onRevise, onStartOver, disableApprove = false }: {
   review: SectionReviewResponse
   onApprove: (draft: string) => void
   onRevise: (direction: string) => void
   onStartOver: () => void
+  disableApprove?: boolean
 }) {
   const [editedDraft, setEditedDraft] = useState(review.draft)
   const [reviseInput, setReviseInput] = useState('')
@@ -65,7 +66,8 @@ export function SectionReview({ review, onApprove, onRevise, onStartOver }: {
       <div className="flex gap-3 flex-wrap">
         <button
           onClick={() => onApprove(editedDraft)}
-          className="px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors"
+          disabled={disableApprove}
+          className="px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Approve &amp; Continue
         </button>
