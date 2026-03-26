@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Session, Path, SectionStatus, BrandData } from '../types'
+import type { Session, Path, SectionStatus, BrandData, InternMeta } from '../types'
 import { createSession, getSession, updateSession, listSessions, deleteSession } from '../services/storage'
 import { SECTIONS } from '../data/sections'
 
@@ -17,6 +17,7 @@ type BrandGuideState = {
   nextSection: () => Promise<void>
   updateSectionStatus: (sectionId: string, status: SectionStatus) => Promise<void>
   approveSectionDraft: (sectionId: string, draft: string) => Promise<void>
+  setInternMeta: (meta: InternMeta) => Promise<void>
 }
 
 export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
@@ -99,5 +100,12 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     }
     await updateSession(session.id, { sections })
     set({ session: { ...session, sections, updatedAt: new Date().toISOString() } })
+  },
+
+  setInternMeta: async (meta) => {
+    const { session } = get()
+    if (!session) return
+    await updateSession(session.id, { internMeta: meta })
+    set({ session: { ...session, internMeta: meta, updatedAt: new Date().toISOString() } })
   },
 }))

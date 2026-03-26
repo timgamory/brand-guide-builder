@@ -67,7 +67,11 @@ export function PathSelection() {
       return
     }
     await createNewSession(path)
-    navigate('/wizard/basics')
+    if (path === 'intern') {
+      navigate('/intern-setup')
+    } else {
+      navigate('/wizard/basics')
+    }
   }
 
   const handleResume = async (id: string) => {

@@ -4,6 +4,7 @@ import { ApiKeySetup } from './pages/ApiKeySetup'
 import { WizardShell } from './components/layout/WizardShell'
 import { WizardSection } from './pages/WizardSection'
 import { GuidePreview } from './pages/GuidePreview'
+import { InternSetup } from './pages/InternSetup'
 
 function Placeholder({ name }: { name: string }) {
   return (
@@ -18,6 +19,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<PathSelection />} />
       <Route path="/setup" element={<ApiKeySetup />} />
+      <Route path="/intern-setup" element={<InternSetup />} />
       <Route path="/wizard" element={<WizardShell />}>
         <Route index element={<WizardSection />} />
         <Route path=":sectionId" element={<WizardSection />} />
