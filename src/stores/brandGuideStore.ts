@@ -18,6 +18,7 @@ type BrandGuideState = {
   updateSectionStatus: (sectionId: string, status: SectionStatus) => Promise<void>
   approveSectionDraft: (sectionId: string, draft: string) => Promise<void>
   setInternMeta: (meta: InternMeta) => Promise<void>
+  submitForReview: () => Promise<string | undefined>
 }
 
 export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
@@ -107,5 +108,14 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     if (!session) return
     await updateSession(session.id, { internMeta: meta })
     set({ session: { ...session, internMeta: meta, updatedAt: new Date().toISOString() } })
+  },
+
+  submitForReview: async () => {
+    const { session } = get()
+    if (!session) return undefined
+    const reviewToken = crypto.randomUUID()
+    await updateSession(session.id, { reviewToken })
+    set({ session: { ...session, reviewToken, updatedAt: new Date().toISOString() } })
+    return reviewToken
   },
 }))

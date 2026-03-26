@@ -5,14 +5,7 @@ import { WizardShell } from './components/layout/WizardShell'
 import { WizardSection } from './pages/WizardSection'
 import { GuidePreview } from './pages/GuidePreview'
 import { InternSetup } from './pages/InternSetup'
-
-function Placeholder({ name }: { name: string }) {
-  return (
-    <div className="flex items-center justify-center h-full font-body text-brand-text-muted p-12">
-      {name}
-    </div>
-  )
-}
+import { FellowReview } from './pages/FellowReview'
 
 export default function App() {
   return (
@@ -25,7 +18,7 @@ export default function App() {
         <Route path=":sectionId" element={<WizardSection />} />
       </Route>
       <Route path="/preview" element={<GuidePreview />} />
-      <Route path="/review/:token" element={<Placeholder name="Fellow Review" />} />
+      <Route path="/review/:token" element={<FellowReview />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

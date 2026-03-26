@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Session, Conversation, Reflections, Review } from '../types'
+import type { Session, Conversation, Reflections, Review, ReviewStatus } from '../types'
 import { SECTIONS } from '../data/sections'
 
 const db = new Dexie('BrandGuideBuilder') as Dexie & {
@@ -85,6 +85,22 @@ async function saveReflection(sessionId: string, sectionId: string, text: string
   }
 }
 
+async function getReview(sessionId: string): Promise<Review | undefined> {
+  return db.reviews.get(sessionId)
+}
+
+async function saveReviewStatus(sessionId: string, sectionId: string, status: ReviewStatus, notes?: string): Promise<void> {
+  const existing = await db.reviews.get(sessionId)
+  const sectionState = { status, notes, reviewedAt: new Date().toISOString() }
+  if (existing) {
+    await db.reviews.update(sessionId, {
+      sections: { ...existing.sections, [sectionId]: sectionState }
+    })
+  } else {
+    await db.reviews.add({ id: sessionId, sections: { [sectionId]: sectionState } })
+  }
+}
+
 async function getConversation(sessionId: string, sectionId: string): Promise<Conversation | undefined> {
   return db.conversations.get(`${sessionId}:${sectionId}`)
 }
@@ -103,6 +119,8 @@ export {
   deleteSession,
   getReflections,
   saveReflection,
+  getReview,
+  saveReviewStatus,
   getConversation,
   saveConversation,
 }
