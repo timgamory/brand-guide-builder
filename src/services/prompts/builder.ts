@@ -1,4 +1,4 @@
-import type { Session } from '../../types'
+import type { Session, ResearchTask } from '../../types'
 import { SECTIONS } from '../../data/sections'
 import { ENTREPRENEUR_PERSONA, INTERN_COACH_PERSONA } from './persona'
 import { getSectionPrompt } from './sections'
@@ -25,15 +25,41 @@ function buildContextBlock(session: Session): string {
   return lines.join('\n')
 }
 
-export function buildSystemPrompt(session: Session, sectionId: string): string {
+function buildResearchBlock(tasks: ResearchTask[], session: Session): string {
+  if (tasks.length === 0) return ''
+  const fellowName = session.internMeta?.fellowName ?? 'the fellow'
+  const lines = [`Research notes on ${fellowName}'s brand:`]
+  for (const t of tasks) {
+    const status = t.completed ? '✓ Completed' : '○ Not completed'
+    lines.push(`- [${status}] ${t.description}`)
+    if (t.notes) lines.push(`  Notes: ${t.notes}`)
+  }
+  return lines.join('\n')
+}
+
+export function buildSystemPrompt(session: Session, sectionId: string, researchTasks?: ResearchTask[]): string {
   const persona = session.path === 'entrepreneur' ? ENTREPRENEUR_PERSONA : INTERN_COACH_PERSONA
   const context = buildContextBlock(session)
   const sectionPrompt = getSectionPrompt(sectionId, session.path)
 
   const parts = ['# Persona\n\n' + persona]
 
+  // Add intern context with names
+  if (session.path === 'intern' && session.internMeta) {
+    const internContext = `The intern's name is ${session.internMeta.internName}. They are building a brand guide for ${session.internMeta.fellowName}.`
+    parts.push('# Intern Context\n\n' + internContext)
+  }
+
   if (context) {
     parts.push('# Context\n\n' + context)
+  }
+
+  // Add research block for intern path
+  if (session.path === 'intern' && researchTasks) {
+    const researchBlock = buildResearchBlock(researchTasks, session)
+    if (researchBlock) {
+      parts.push('# Research\n\n' + researchBlock)
+    }
   }
 
   if (sectionPrompt) {

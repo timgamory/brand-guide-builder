@@ -7,6 +7,9 @@ export const valuesEntrepreneur = {
 }
 
 export const valuesIntern = {
-  ...valuesEntrepreneur,
-  opener: "Values are where the brand gets real. What did you discover about what your fellow truly stands for? When you asked about something they'd never compromise on, what did they say?",
+  goal: "Guide the intern to synthesize their research about the fellow's core values into clear, actionable value statements.",
+  opener: "Let's dig into the values you uncovered in your research. When you asked the fellow about tough decisions, what principles came up? Were there patterns between what they said and what you observed?",
+  fields: ['value1Name', 'value1Desc', 'value2Name', 'value2Desc', 'value3Name', 'value3Desc'],
+  reviewInstruction: `Generate a section review for "What You Stand For" section. Return JSON with NO markdown fences:
+{"draft": "A values section with 3 named values, each with a clear 2-3 sentence description of what it means in practice. Written at professional level, elevating the intern's research findings.", "suggestions": ["1-2 refinements"], "alternatives": [{"option": "An alternative value framing", "rationale": "Why it might resonate differently"}], "teachingMoment": "1-2 sentences on why values matter for brand consistency."}`,
 }

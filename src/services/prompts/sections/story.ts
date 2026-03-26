@@ -7,6 +7,9 @@ export const storyEntrepreneur = {
 }
 
 export const storyIntern = {
-  ...storyEntrepreneur,
-  opener: "Let's talk about what you learned from your research about the fellow's story. When you asked them why they started this, what did they say?",
+  goal: "Guide the intern to synthesize their research about the fellow's origin story, core offering, and target audience into a polished brand narrative.",
+  opener: "Let's talk about what you learned from your research about the fellow's story. When you asked them why they started this, what did they say? What stood out to you?",
+  fields: ['originStory', 'whatYouDo', 'whoYouServe'],
+  reviewInstruction: `Generate a section review for "Your Story" section. Return JSON with NO markdown fences:
+{"draft": "A compelling brand story section (3-4 paragraphs) covering: the origin and motivation, what the organization does, and who it serves. Written at professional copywriting level — elevate the intern's research findings into polished brand language.", "suggestions": ["1-2 refinements the intern should consider"], "alternatives": [{"option": "A different narrative angle", "rationale": "Why this angle might work"}], "teachingMoment": "1-2 sentences on what makes a good origin story work for a brand."}`,
 }

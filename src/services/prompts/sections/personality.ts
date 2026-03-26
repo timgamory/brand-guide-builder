@@ -7,6 +7,9 @@ export const personalityEntrepreneur = {
 }
 
 export const personalityIntern = {
-  ...personalityEntrepreneur,
-  opener: "Brand personality is about how the brand feels to people. Based on your research \u2014 reading their social media, watching how they interact with customers \u2014 what adjectives would you use to describe the fellow's brand personality?",
+  goal: "Guide the intern to define the fellow's brand personality, voice, and tone from their research observations.",
+  opener: "Now let's talk about brand personality. When you looked at the fellow's actual communications \u2014 their emails, social posts, how they talk \u2014 what adjectives came to mind? Was there a gap between how they present themselves and how they want to be seen?",
+  fields: ['personalityTraits', 'brandVoice', 'brandNot'],
+  reviewInstruction: `Generate a section review for "Brand Personality" section. Return JSON with NO markdown fences:
+{"draft": "A brand personality section covering: 3-5 personality traits, voice description, and what the brand is NOT. Professional quality, built from intern's research insights.", "suggestions": ["1-2 refinements"], "alternatives": [{"option": "An alternative voice direction", "rationale": "Why this tone might work"}], "teachingMoment": "1-2 sentences on how personality shapes every brand touchpoint."}`,
 }
