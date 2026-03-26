@@ -74,6 +74,7 @@ export type Conversation = {
   id: string
   messages: Message[]
   researchTasks?: ResearchTask[]
+  conversationSummary?: string
 }
 
 // === Reflections ===

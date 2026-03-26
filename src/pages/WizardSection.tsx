@@ -7,6 +7,8 @@ import { getSection } from '../data/sections'
 import { getResearchTasks } from '../data/researchTasks'
 import { buildSystemPrompt, getOpener } from '../services/prompts/builder'
 import { sendMessage, parseSectionReview } from '../services/ai'
+import { prepareMessagesForApi, generateSummary, needsSummarization } from '../services/summarize'
+import { getConversation, saveConversation } from '../services/storage'
 import { ChatWindow } from '../components/chat/ChatWindow'
 import { SectionReview } from '../components/review/SectionReview'
 import { FallbackForm } from '../components/shared/FallbackForm'
@@ -100,7 +102,26 @@ export function WizardSection() {
         ? buildSystemPrompt(session, sectionId, currentResearchTasks)
         : buildSystemPrompt(session, sectionId)
       const allMessages = [...messages, userMsg]
-      const response = await sendMessage(systemPrompt, allMessages, setStreamingContent)
+
+      // Summarize long conversations
+      const convo = await getConversation(session.id, sectionId)
+      let summary = convo?.conversationSummary
+
+      if (needsSummarization(allMessages, summary)) {
+        try {
+          summary = await generateSummary(allMessages)
+          await saveConversation(session.id, sectionId, {
+            messages: useConversationStore.getState().messages,
+            researchTasks: useConversationStore.getState().researchTasks,
+            conversationSummary: summary,
+          })
+        } catch {
+          // If summarization fails, proceed without it
+        }
+      }
+
+      const apiMessages = prepareMessagesForApi(allMessages, summary)
+      const response = await sendMessage(systemPrompt, apiMessages, setStreamingContent)
 
       setStreamingContent(null)
       setStreaming(false)
