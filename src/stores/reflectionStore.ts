@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import type { ReflectionEntry } from '../types'
 import { getReflections, saveReflection } from '../services/storage'
 
 type ReflectionState = {

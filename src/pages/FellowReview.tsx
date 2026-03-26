@@ -5,8 +5,7 @@ import { useReviewStore } from '../stores/reviewStore'
 import { SECTIONS } from '../data/sections'
 import type { ReviewStatus } from '../types'
 
-function ReviewSection({ sectionId, title, draft, reviewStatus, notes, onAction }: {
-  sectionId: string
+function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
   title: string
   draft: string
   reviewStatus: ReviewStatus
@@ -121,7 +120,6 @@ export function FellowReview() {
           return (
             <ReviewSection
               key={section.id}
-              sectionId={section.id}
               title={section.title}
               draft={draft}
               reviewStatus={reviewState.status}

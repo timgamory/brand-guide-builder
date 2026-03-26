@@ -4,7 +4,6 @@ import { useBrandGuideStore } from '../stores/brandGuideStore'
 
 export function InternSetup() {
   const navigate = useNavigate()
-  const session = useBrandGuideStore(s => s.session)
   const setInternMeta = useBrandGuideStore(s => s.setInternMeta)
   const [internName, setInternName] = useState('')
   const [fellowName, setFellowName] = useState('')

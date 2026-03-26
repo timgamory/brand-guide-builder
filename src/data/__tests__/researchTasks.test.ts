@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getResearchTasks, RESEARCH_TASKS } from '../researchTasks'
+import { getResearchTasks } from '../researchTasks'
 import { ALL_SECTION_IDS } from '../sections'
 
 describe('researchTasks', () => {
