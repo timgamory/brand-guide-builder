@@ -159,6 +159,13 @@ export function WizardSection() {
     }
   }, [clearConversation, isIntern, session, sectionId])
 
+  const handleSkip = useCallback(async () => {
+    if (!sectionId) return
+    await useBrandGuideStore.getState().skipSection(sectionId)
+    const next = useBrandGuideStore.getState().session?.currentSection
+    if (next) navigate(`/wizard/${next}`)
+  }, [sectionId, navigate])
+
   const handleFallbackChange = useCallback(async (key: string, value: string) => {
     await updateBrandData({ [key]: value })
   }, [updateBrandData])
@@ -175,6 +182,14 @@ export function WizardSection() {
           <h2 className="font-heading text-2xl font-semibold text-brand-text">{section.title}</h2>
           {section.optional && (
             <span className="text-[11px] font-semibold text-brand-text-faint uppercase tracking-wider bg-brand-bg-warm px-2.5 py-0.5 rounded-md">Optional</span>
+          )}
+          {section.optional && session.sections[sectionId ?? '']?.status !== 'in_progress' && session.sections[sectionId ?? '']?.status !== 'approved' && (
+            <button
+              onClick={handleSkip}
+              className="text-sm text-brand-text-faint hover:text-brand-text transition-colors"
+            >
+              Skip this section
+            </button>
           )}
         </div>
         <p className="text-brand-text-muted text-[15px] mt-1">{section.subtitle}</p>

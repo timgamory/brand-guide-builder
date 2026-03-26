@@ -18,6 +18,7 @@ type BrandGuideState = {
   updateSectionStatus: (sectionId: string, status: SectionStatus) => Promise<void>
   approveSectionDraft: (sectionId: string, draft: string) => Promise<void>
   setInternMeta: (meta: InternMeta) => Promise<void>
+  skipSection: (sectionId: string) => Promise<void>
   submitForReview: () => Promise<string | undefined>
 }
 
@@ -108,6 +109,18 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     if (!session) return
     await updateSession(session.id, { internMeta: meta })
     set({ session: { ...session, internMeta: meta, updatedAt: new Date().toISOString() } })
+  },
+
+  skipSection: async (sectionId) => {
+    const { session } = get()
+    if (!session) return
+    const sections = {
+      ...session.sections,
+      [sectionId]: { ...session.sections[sectionId], status: 'skipped' as const },
+    }
+    await updateSession(session.id, { sections })
+    set({ session: { ...session, sections, updatedAt: new Date().toISOString() } })
+    await get().nextSection()
   },
 
   submitForReview: async () => {

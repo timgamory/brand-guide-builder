@@ -22,7 +22,7 @@ export type Section = {
   fields: Field[]
 }
 
-export type SectionStatus = 'not_started' | 'in_progress' | 'approved'
+export type SectionStatus = 'not_started' | 'in_progress' | 'approved' | 'skipped'
 
 export type SectionState = {
   status: SectionStatus

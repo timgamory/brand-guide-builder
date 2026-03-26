@@ -11,6 +11,9 @@ function StatusIcon({ status }: { status: SectionStatus }) {
   if (status === 'in_progress') {
     return <span className="text-brand-accent-coral text-xs">&#9679;</span>
   }
+  if (status === 'skipped') {
+    return <span className="text-brand-text-faint text-xs">&mdash;</span>
+  }
   return <span className="text-brand-text-faint text-xs">&#9675;</span>
 }
 
