@@ -57,7 +57,7 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
   updateBrandData: async (data) => {
     const { session } = get()
     if (!session) return
-    const brandData = { ...session.brandData, ...data }
+    const brandData: BrandData = { ...session.brandData, ...data } as BrandData
     await updateSession(session.id, { brandData })
     set({ session: { ...session, brandData, updatedAt: new Date().toISOString() } })
   },
