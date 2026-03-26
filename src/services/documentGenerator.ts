@@ -1,7 +1,7 @@
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, PageBreak, BorderStyle } from 'docx'
 import { saveAs } from 'file-saver'
 import { SECTIONS } from '../data/sections'
-import type { Session } from '../types'
+import type { Session, ReflectionEntry } from '../types'
 
 const SECTION_TITLES: Record<string, string> = {
   basics: 'Introduction',
@@ -126,4 +126,36 @@ export async function downloadDocx(session: Session) {
   const buffer = await Packer.toBlob(doc)
   const filename = `${(orgName).replace(/\s+/g, '-').toLowerCase()}-brand-guide.docx`
   saveAs(buffer, filename)
+}
+
+export function generateReflectionMarkdown(session: Session, entries: ReflectionEntry[]): string {
+  const internName = session.internMeta?.internName ?? 'Intern'
+  const fellowName = session.internMeta?.fellowName ?? 'Fellow'
+  const orgName = session.brandData.orgName || 'the organization'
+
+  const lines: string[] = []
+  lines.push(`# Reflection Document`)
+  lines.push('')
+  lines.push(`**${internName}** — Brand guide project for **${fellowName}** (${orgName})`)
+  lines.push('')
+  lines.push('---')
+  lines.push('')
+
+  for (const entry of entries) {
+    const section = SECTIONS.find(s => s.id === entry.sectionId)
+    const title = section?.title ?? entry.sectionId
+    lines.push(`## ${title}`)
+    lines.push('')
+    lines.push(entry.text)
+    lines.push('')
+  }
+
+  return lines.join('\n')
+}
+
+export function downloadReflectionMarkdown(session: Session, entries: ReflectionEntry[]) {
+  const md = generateReflectionMarkdown(session, entries)
+  const filename = `${(session.internMeta?.internName || 'intern').replace(/\s+/g, '-').toLowerCase()}-reflections.md`
+  const blob = new Blob([md], { type: 'text/markdown' })
+  saveAs(blob, filename)
 }
