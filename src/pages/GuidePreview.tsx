@@ -112,6 +112,13 @@ export function GuidePreview() {
             <h3 className="font-heading text-lg font-semibold text-brand-text">Intern Tools</h3>
 
             <button
+              onClick={() => navigate('/presentation')}
+              className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text font-medium text-sm hover:bg-brand-bg transition-colors"
+            >
+              Present to Fellow
+            </button>
+
+            <button
               onClick={handleDownloadReflections}
               className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text font-medium text-sm hover:bg-brand-bg transition-colors"
             >

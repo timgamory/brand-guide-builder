@@ -6,6 +6,7 @@ import { WizardSection } from './pages/WizardSection'
 import { GuidePreview } from './pages/GuidePreview'
 import { InternSetup } from './pages/InternSetup'
 import { FellowReview } from './pages/FellowReview'
+import { PresentationView } from './pages/PresentationView'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
       </Route>
       <Route path="/preview" element={<GuidePreview />} />
       <Route path="/review/:token" element={<FellowReview />} />
+      <Route path="/presentation" element={<PresentationView />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
