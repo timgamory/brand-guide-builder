@@ -23,7 +23,7 @@ export async function sendMessage(
   const anthropic = getClient()
 
   const stream = anthropic.messages.stream({
-    model: 'claude-sonnet-4-6-20250627',
+    model: 'claude-sonnet-4-6',
     max_tokens: 2000,
     system: systemPrompt,
     messages: messages.map(m => ({
