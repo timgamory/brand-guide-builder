@@ -55,6 +55,12 @@ export function Sidebar() {
           </button>
         )
       })}
+
+      {session?.path === 'intern' && session.internMeta?.fellowName && (
+        <p className="px-5 mt-4 text-[11px] text-brand-text-faint">
+          Building for {session.internMeta.fellowName}
+        </p>
+      )}
     </nav>
   )
 }

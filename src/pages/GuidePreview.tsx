@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
+import { useReflectionStore } from '../stores/reflectionStore'
 import { SECTIONS } from '../data/sections'
-import { downloadMarkdown, downloadDocx } from '../services/documentGenerator'
+import { downloadMarkdown, downloadDocx, downloadReflectionMarkdown } from '../services/documentGenerator'
 
 const SECTION_TITLES: Record<string, string> = {
   basics: 'Introduction',
@@ -20,10 +22,31 @@ const SECTION_TITLES: Record<string, string> = {
 export function GuidePreview() {
   const navigate = useNavigate()
   const session = useBrandGuideStore(s => s.session)
+  const [reviewUrl, setReviewUrl] = useState<string | null>(
+    session?.reviewToken ? `${window.location.origin}/review/${session.reviewToken}` : null
+  )
 
   if (!session) {
     navigate('/')
     return null
+  }
+
+  const handleSubmitForReview = async () => {
+    const token = await useBrandGuideStore.getState().submitForReview()
+    if (token) {
+      setReviewUrl(`${window.location.origin}/review/${token}`)
+    }
+  }
+
+  const handleDownloadReflections = async () => {
+    if (!session) return
+    await useReflectionStore.getState().loadReflections(session.id)
+    const entries = Object.entries(useReflectionStore.getState().entries).map(([sectionId, text]) => ({
+      sectionId,
+      text,
+      timestamp: new Date().toISOString(),
+    }))
+    downloadReflectionMarkdown(session, entries)
   }
 
   const approvedSections = SECTIONS.filter(s => {
@@ -59,6 +82,45 @@ export function GuidePreview() {
             </button>
           </div>
         </div>
+
+        {session.path === 'intern' && (
+          <div className="space-y-4 mt-6 pt-6 border-t border-brand-border">
+            <h3 className="font-heading text-lg font-semibold text-brand-text">Intern Tools</h3>
+
+            <button
+              onClick={handleDownloadReflections}
+              className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text font-medium text-sm hover:bg-brand-bg transition-colors"
+            >
+              Download Reflections
+            </button>
+
+            {!reviewUrl ? (
+              <button
+                onClick={handleSubmitForReview}
+                className="px-5 py-2.5 rounded-xl bg-brand-accent-coral text-white font-medium text-sm hover:opacity-90 transition-opacity"
+              >
+                Submit for Fellow Review
+              </button>
+            ) : (
+              <div className="bg-brand-bg-warm rounded-xl p-4">
+                <p className="text-sm text-brand-text-muted mb-2">Share this link with the fellow:</p>
+                <div className="flex gap-2">
+                  <input
+                    readOnly
+                    value={reviewUrl}
+                    className="flex-1 px-3 py-2 rounded-lg border border-brand-border bg-white text-sm font-mono text-brand-text"
+                  />
+                  <button
+                    onClick={() => navigator.clipboard.writeText(reviewUrl)}
+                    className="px-3 py-2 rounded-lg bg-brand-primary text-white text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-10 space-y-10">
           {approvedSections.length === 0 ? (
