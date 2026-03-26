@@ -58,14 +58,7 @@ export function PathSelection() {
     loadSessions().then(() => setLoaded(true))
   }, [loadSessions])
 
-  const apiKey = localStorage.getItem('anthropic-api-key')
-
   const handleSelect = async (path: Path) => {
-    if (!apiKey) {
-      localStorage.setItem('pending-path', path)
-      navigate('/setup')
-      return
-    }
     await createNewSession(path)
     if (path === 'intern') {
       navigate('/intern-setup')
