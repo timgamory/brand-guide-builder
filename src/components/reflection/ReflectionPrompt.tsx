@@ -3,6 +3,13 @@ const REFLECTION_PROMPTS: Record<string, string> = {
   story: 'What did this section teach you about how brands communicate their origin? How does a good story build trust?',
   values: 'Why do you think naming values explicitly matters for a brand? How did the fellow\'s lived values compare to what they said?',
   personality: 'What surprised you about translating a person\'s personality into a brand personality? What was hardest to capture?',
+  visuals_colors: 'What did you learn about how color choices shape the way people perceive a brand? Were the fellow\'s existing colors intentional or accidental?',
+  visuals_logo: 'How does consistent name and logo treatment affect credibility? What surprised you about how many ways the fellow\'s name was being used?',
+  typography: 'Before this section, did you think fonts mattered much for branding? What changed? How do font choices connect to the personality you defined earlier?',
+  messaging: 'What was the difference between how the fellow talks about their work casually vs. what ended up in the brand messaging? What makes a tagline stick?',
+  application: 'Looking at the full set of brand guidelines now, what ties everything together? How do the do/don\'t rules make the abstract feel concrete?',
+  social_media: 'What did you learn about how a brand voice can flex across different platforms while staying consistent? What was the biggest gap between intent and reality?',
+  photography: 'How do visual choices reinforce (or undermine) everything else in a brand guide? What makes a photo feel "on-brand" vs. generic?',
 }
 
 export function ReflectionPrompt({ sectionId, value, onChange }: {
