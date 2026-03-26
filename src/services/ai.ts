@@ -1,7 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { Message } from '../types'
+import { extractJsonObject } from './jsonExtract'
 
 let client: Anthropic | null = null
+
+const MAX_RETRIES = 3
+const INITIAL_BACKOFF_MS = 1000
 
 function getLocalApiKey(): string | null {
   return localStorage.getItem('anthropic-api-key')
@@ -21,6 +25,21 @@ export function resetClient() {
 
 function hasLocalKey(): boolean {
   return !!getLocalApiKey()
+}
+
+function isRetryable(error: unknown): boolean {
+  if (error instanceof Error) {
+    const msg = error.message.toLowerCase()
+    // Retry on network errors and rate limits, not on auth/validation errors
+    if (msg.includes('fetch') || msg.includes('network') || msg.includes('timeout')) return true
+    if (msg.includes('429') || msg.includes('too many') || msg.includes('rate')) return true
+    if (msg.includes('502') || msg.includes('503') || msg.includes('504')) return true
+  }
+  return false
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 async function sendViaProxy(
@@ -108,10 +127,25 @@ export async function sendMessage(
   messages: Message[],
   onChunk: (text: string) => void,
 ): Promise<string> {
-  if (hasLocalKey()) {
-    return sendViaSdk(systemPrompt, messages, onChunk)
+  const send = hasLocalKey() ? sendViaSdk : sendViaProxy
+  let lastError: unknown
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      return await send(systemPrompt, messages, onChunk)
+    } catch (error) {
+      lastError = error
+      if (!isRetryable(error) || attempt === MAX_RETRIES - 1) {
+        throw error
+      }
+      // Reset chunk state for retry — caller sees fresh stream
+      onChunk('')
+      const backoff = INITIAL_BACKOFF_MS * Math.pow(2, attempt)
+      await sleep(backoff)
+    }
   }
-  return sendViaProxy(systemPrompt, messages, onChunk)
+
+  throw lastError
 }
 
 export function parseSectionReview(text: string): {
@@ -124,10 +158,10 @@ export function parseSectionReview(text: string): {
     const parsed = JSON.parse(text)
     if (parsed.draft) return parsed
   } catch {
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
+    const jsonStr = extractJsonObject(text)
+    if (jsonStr) {
       try {
-        const parsed = JSON.parse(jsonMatch[0])
+        const parsed = JSON.parse(jsonStr)
         if (parsed.draft) return parsed
       } catch { /* fall through */ }
     }

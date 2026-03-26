@@ -26,19 +26,19 @@ const SECTION_TITLES: Record<string, string> = {
   photography: 'Photography & Imagery',
 }
 
+import { extractJsonObject } from './jsonExtract'
+
 export function parseConsistencyResult(text: string): ConsistencyResult | null {
   try {
     const parsed = JSON.parse(text)
     if (parsed.verdict) return parsed
   } catch {
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
+    const jsonStr = extractJsonObject(text)
+    if (jsonStr) {
       try {
-        const parsed = JSON.parse(jsonMatch[0])
+        const parsed = JSON.parse(jsonStr)
         if (parsed.verdict) return parsed
-      } catch {
-        /* fall through */
-      }
+      } catch { /* fall through */ }
     }
   }
   return null

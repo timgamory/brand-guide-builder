@@ -75,6 +75,7 @@ export type Conversation = {
   messages: Message[]
   researchTasks?: ResearchTask[]
   conversationSummary?: string
+  summarizedAtCount?: number
 }
 
 // === Reflections ===

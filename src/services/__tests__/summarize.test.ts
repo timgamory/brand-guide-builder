@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { prepareMessagesForApi } from '../summarize'
+import { prepareMessagesForApi, needsSummarization } from '../summarize'
 import type { Message } from '../../types'
 
 function makeMessages(count: number): Message[] {
@@ -31,5 +31,27 @@ describe('prepareMessagesForApi', () => {
     expect(result.length).toBe(20)
     expect(result[0].content).toBe('Message 6')
     expect(result[result.length - 1].content).toBe('Message 25')
+  })
+})
+
+describe('needsSummarization', () => {
+  it('returns false when messages <= 20', () => {
+    expect(needsSummarization(15, undefined)).toBe(false)
+  })
+
+  it('returns true when messages > 20 and no prior summary', () => {
+    expect(needsSummarization(25, undefined)).toBe(true)
+  })
+
+  it('returns false when messages > 20 but recently summarized', () => {
+    expect(needsSummarization(25, 22)).toBe(false)
+  })
+
+  it('returns true when conversation has grown 10+ messages since last summary', () => {
+    expect(needsSummarization(35, 22)).toBe(true)
+  })
+
+  it('returns false when conversation grew but not enough', () => {
+    expect(needsSummarization(30, 22)).toBe(false)
   })
 })

@@ -106,14 +106,17 @@ export function WizardSection() {
       // Summarize long conversations
       const convo = await getConversation(session.id, sectionId)
       let summary = convo?.conversationSummary
+      let summarizedAtCount = convo?.summarizedAtCount
 
-      if (needsSummarization(allMessages, summary)) {
+      if (needsSummarization(allMessages.length, summarizedAtCount)) {
         try {
-          summary = await generateSummary(allMessages)
+          summary = await generateSummary(allMessages, summary)
+          summarizedAtCount = allMessages.length
           await saveConversation(session.id, sectionId, {
             messages: useConversationStore.getState().messages,
             researchTasks: useConversationStore.getState().researchTasks,
             conversationSummary: summary,
+            summarizedAtCount,
           })
         } catch {
           // If summarization fails, proceed without it
