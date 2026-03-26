@@ -10,6 +10,7 @@ CREATE TABLE sessions (
   current_section TEXT NOT NULL DEFAULT 'basics',
   intern_meta JSONB,
   review_token TEXT,
+  user_slug TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

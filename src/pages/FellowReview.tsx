@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useBrandGuideStore } from '../stores/brandGuideStore'
 import { useReviewStore } from '../stores/reviewStore'
+import { getSessionByReviewToken } from '../services/storage'
 import { SECTIONS } from '../data/sections'
-import type { ReviewStatus } from '../types'
+import type { ReviewStatus, Session } from '../types'
 
 function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
   title: string
@@ -74,22 +74,18 @@ function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
 
 export function FellowReview() {
   const { token } = useParams<{ token: string }>()
-  const { sessions, loadSessions } = useBrandGuideStore()
   const { sections: reviewSections, loadReview, setReviewStatus } = useReviewStore()
-  const [session, setSession] = useState<typeof sessions[0] | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
-    loadSessions()
-  }, [loadSessions])
-
-  useEffect(() => {
-    if (!token || sessions.length === 0) return
-    const found = sessions.find(s => s.reviewToken === token)
-    if (found) {
-      setSession(found)
-      loadReview(found.id)
-    }
-  }, [token, sessions, loadReview])
+    if (!token) return
+    getSessionByReviewToken(token).then(found => {
+      if (found) {
+        setSession(found)
+        loadReview(found.id)
+      }
+    })
+  }, [token, loadReview])
 
   if (!session) {
     return (

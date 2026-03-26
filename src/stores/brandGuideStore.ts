@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Session, Path, SectionStatus, BrandData, InternMeta } from '../types'
 import { createSession, getSession, updateSession, listSessions, deleteSession } from '../services/storage'
+import { getUserSlug } from '../services/userSlug'
 import { SECTIONS } from '../data/sections'
 
 type BrandGuideState = {
@@ -30,7 +31,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
 
   createNewSession: async (path) => {
     set({ isLoading: true })
-    const session = await createSession(path)
+    const userSlug = getUserSlug() ?? undefined
+    const session = await createSession(path, userSlug)
     set({ session, isLoading: false })
   },
 
@@ -41,7 +43,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
   },
 
   loadSessions: async () => {
-    const sessions = await listSessions()
+    const userSlug = getUserSlug() ?? undefined
+    const sessions = await listSessions(userSlug)
     set({ sessions })
   },
 
@@ -137,7 +140,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const { session } = get()
     if (session) return
     set({ isLoading: true })
-    const sessions = await listSessions()
+    const userSlug = getUserSlug() ?? undefined
+    const sessions = await listSessions(userSlug)
     if (sessions.length > 0) {
       set({ session: sessions[0], sessions, isLoading: false })
     } else {

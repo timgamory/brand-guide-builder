@@ -37,6 +37,7 @@ export type BrandData = Record<string, string>
 export type Session = {
   id: string
   path: Path
+  userSlug?: string
   brandData: BrandData
   sections: Record<string, SectionState>
   currentSection: string

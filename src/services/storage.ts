@@ -25,6 +25,7 @@ function sessionFromRow(row: Record<string, unknown>): Session {
   return {
     id: row.id as string,
     path: row.path as Session['path'],
+    userSlug: row.user_slug as string | undefined,
     brandData: (row.brand_data ?? {}) as Session['brandData'],
     sections: (row.sections ?? {}) as Session['sections'],
     currentSection: row.current_section as string,
@@ -39,6 +40,7 @@ function sessionToRow(session: Partial<Session> & { id?: string }) {
   const row: Record<string, unknown> = {}
   if (session.id !== undefined) row.id = session.id
   if (session.path !== undefined) row.path = session.path
+  if (session.userSlug !== undefined) row.user_slug = session.userSlug
   if (session.brandData !== undefined) row.brand_data = session.brandData
   if (session.sections !== undefined) row.sections = session.sections
   if (session.currentSection !== undefined) row.current_section = session.currentSection
@@ -69,10 +71,11 @@ function conversationToRow(id: string, convo: Omit<Conversation, 'id'>) {
 
 // === Sessions ===
 
-async function createSession(path: Session['path']): Promise<Session> {
+async function createSession(path: Session['path'], userSlug?: string): Promise<Session> {
   const session: Session = {
     id: generateId(),
     path,
+    userSlug,
     brandData: {},
     sections: buildInitialSections(),
     currentSection: 'basics',
@@ -83,6 +86,7 @@ async function createSession(path: Session['path']): Promise<Session> {
   const { error } = await supabase.from('sessions').insert({
     id: session.id,
     path: session.path,
+    user_slug: session.userSlug,
     brand_data: session.brandData,
     sections: session.sections,
     current_section: session.currentSection,
@@ -115,14 +119,30 @@ async function updateSession(id: string, updates: Partial<Omit<Session, 'id' | '
   if (error) throw new Error(`Failed to update session: ${error.message}`)
 }
 
-async function listSessions(): Promise<Session[]> {
-  const { data, error } = await supabase
+async function listSessions(userSlug?: string): Promise<Session[]> {
+  let query = supabase
     .from('sessions')
     .select('*')
     .order('updated_at', { ascending: false })
 
+  if (userSlug) {
+    query = query.eq('user_slug', userSlug)
+  }
+
+  const { data, error } = await query
   if (error) throw new Error(`Failed to list sessions: ${error.message}`)
   return (data ?? []).map(sessionFromRow)
+}
+
+async function getSessionByReviewToken(token: string): Promise<Session | undefined> {
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('*')
+    .eq('review_token', token)
+    .single()
+
+  if (error || !data) return undefined
+  return sessionFromRow(data)
 }
 
 async function deleteSession(id: string): Promise<void> {
@@ -227,6 +247,7 @@ async function saveConversation(sessionId: string, sectionId: string, conversati
 export {
   createSession,
   getSession,
+  getSessionByReviewToken,
   updateSession,
   listSessions,
   deleteSession,
