@@ -22,16 +22,21 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 
 **Key patterns**:
 - Section definitions in `src/data/sections.ts` drive both AI conversation (field keys = data to extract) and fallback form mode
-- System prompts assembled dynamically in `src/services/prompts/builder.ts` from persona + context + section blocks
+- System prompts assembled dynamically in `src/services/prompts/builder.ts` from persona + context + section + research blocks
 - AI responses for section reviews are structured JSON parsed by `parseSectionReview()` in `src/services/ai.ts`
 - Documents generated client-side from approved drafts, not raw field data
+- Research task templates in `src/data/researchTasks.ts` drive intern path task assignments
+- Intern path has three modes per section: research → synthesis → review (with reflection)
 
-**Two paths share**: layout, sidebar, section definitions, review UI, document generators. They differ in: AI persona, conversation strategy. Intern path (Phase 2) adds research tasks + reflections.
+**Two paths share**: layout, sidebar, section definitions, review UI, document generators. They differ in: AI persona, conversation strategy, and the intern path adds research tasks, synthesis coaching, reflections, and fellow review.
+
+**Stores**: `brandGuideStore` (session/section state), `conversationStore` (messages + research tasks), `reflectionStore` (intern reflections), `reviewStore` (fellow review status)
 
 ## Design Docs
 
 - `docs/plans/2026-03-25-brand-guide-builder-design.md` — Full technical design
 - `docs/plans/2026-03-25-phase-1-implementation.md` — Phase 1 implementation plan
+- `docs/plans/2026-03-26-phase-2-intern-path.md` — Phase 2 implementation plan (intern path)
 
 ## Visual Identity
 
