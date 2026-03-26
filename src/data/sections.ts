@@ -138,7 +138,6 @@ export const SECTIONS: Section[] = [
   },
 ]
 
-export const PHASE_1_SECTION_IDS = ['basics', 'story', 'values', 'personality'] as const
 export const ALL_SECTION_IDS = SECTIONS.map(s => s.id)
 
 export function getSection(id: string): Section | undefined {

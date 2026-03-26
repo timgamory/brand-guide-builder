@@ -21,6 +21,12 @@ function buildContextBlock(session: Session): string {
   if (d.brandNot) lines.push(`- Not: ${d.brandNot.slice(0, 100)}`)
   if (d.tagline) lines.push(`- Tagline: "${d.tagline}"`)
   if (d.primaryColor) lines.push(`- Primary color: ${d.primaryColor}`)
+  if (d.accentColor1) lines.push(`- Accent color: ${d.accentColor1}${d.accentColor1Name ? ` (${d.accentColor1Name})` : ''}`)
+  if (d.hasLogo) lines.push(`- Logo: ${d.hasLogo}`)
+  if (d.headlineFont) lines.push(`- Headline font: ${d.headlineFont}`)
+  if (d.bodyFont) lines.push(`- Body font: ${d.bodyFont}`)
+  if (d.elevatorPitch) lines.push(`- Elevator pitch: ${d.elevatorPitch.slice(0, 150)}`)
+  if (d.primaryChannels) lines.push(`- Primary channels: ${d.primaryChannels.slice(0, 100)}`)
 
   return lines.join('\n')
 }
