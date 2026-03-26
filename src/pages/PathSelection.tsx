@@ -111,6 +111,17 @@ export function PathSelection() {
           onClick={() => handleSelect('intern')}
         />
       </div>
+
+      <footer className="mt-12 text-center">
+        <a
+          href="https://elevatedigital.nyc"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand-text-faint text-xs hover:text-brand-text-muted transition-colors"
+        >
+          Built by Elevate Digital
+        </a>
+      </footer>
     </div>
   )
 }
