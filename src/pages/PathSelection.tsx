@@ -59,12 +59,12 @@ function HeroSection() {
         <h1 className="font-heading text-4xl md:text-5xl font-bold text-brand-text leading-tight mb-6">
           Your brand already exists.<br />It just needs a guide.
         </h1>
-        <p className="text-brand-text-secondary text-lg leading-relaxed max-w-xl mx-auto mb-8">
+        <p className="text-brand-text-secondary text-lg md:text-xl leading-relaxed max-w-xl mx-auto mb-8">
           You already know what your business stands for. Brand Guide Builder draws it out through conversation and turns it into a professional document you can share with your team, your designer, or your website.
         </p>
         <a
           href="#get-started"
-          className="inline-block bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors"
+          className="inline-block bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:outline-none"
         >
           Build Your Brand Guide
         </a>
@@ -99,7 +99,7 @@ function WhySection() {
           {WHY_CARDS.map((c, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 border border-brand-border shadow-sm">
               <h3 className="font-heading text-lg font-semibold text-brand-text mb-2 leading-snug">{c.title}</h3>
-              <p className="text-brand-text-muted text-[15px] leading-relaxed">{c.body}</p>
+              <p className="text-brand-text-secondary text-[15px] leading-relaxed">{c.body}</p>
             </div>
           ))}
         </div>
@@ -138,7 +138,7 @@ function HowItWorksSection() {
             <div key={s.num}>
               <span className="font-heading text-3xl font-bold text-brand-accent-coral">{s.num}</span>
               <h3 className="font-heading text-lg font-semibold text-brand-text mt-2 mb-2">{s.title}</h3>
-              <p className="text-brand-text-muted text-[15px] leading-relaxed">{s.body}</p>
+              <p className="text-brand-text-secondary text-[15px] leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
@@ -203,7 +203,7 @@ function WhatYouGetSection() {
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {GUIDE_SECTIONS.map((s, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="text-brand-accent-sage mt-0.5 shrink-0">&#10003;</span>
+              <span className="text-brand-accent-sage mt-0.5 shrink-0" aria-hidden="true">&#10003;</span>
               <div>
                 <p className="font-semibold text-brand-text text-[15px]">{s.title}</p>
                 <p className="text-brand-text-muted text-sm">{s.desc}</p>
