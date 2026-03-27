@@ -56,21 +56,34 @@ export function PathSelection() {
   const [loaded, setLoaded] = useState(false)
   const [slug, setSlug] = useState<string | null>(getUserSlug())
   const [nameInput, setNameInput] = useState('')
+  const [pendingPath, setPendingPath] = useState<Path | null>(null)
 
   useEffect(() => {
     if (slug) {
       loadSessions().then(() => setLoaded(true))
+    } else {
+      setLoaded(true)
     }
   }, [slug, loadSessions])
 
-  const handleSetName = () => {
+  const handleSetName = async () => {
     const trimmed = nameInput.trim().toLowerCase().replace(/\s+/g, '-')
-    if (!trimmed) return
+    if (!trimmed || !pendingPath) return
     setUserSlug(trimmed)
     setSlug(trimmed)
+    await createNewSession(pendingPath)
+    if (pendingPath === 'intern') {
+      navigate('/intern-setup')
+    } else {
+      navigate('/wizard/basics')
+    }
   }
 
   const handleSelect = async (path: Path) => {
+    if (!slug) {
+      setPendingPath(path)
+      return
+    }
     await createNewSession(path)
     if (path === 'intern') {
       navigate('/intern-setup')
@@ -89,40 +102,6 @@ export function PathSelection() {
     if (window.confirm('Delete this session? This cannot be undone.')) {
       await deleteSessionById(id)
     }
-  }
-
-  if (!slug) {
-    return (
-      <div className="min-h-screen bg-brand-bg font-body flex flex-col items-center justify-center p-8">
-        <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-8 max-w-sm w-full space-y-6">
-          <div className="text-center">
-            <h1 className="font-heading text-2xl font-bold text-brand-text mb-2">Brand Guide Builder</h1>
-            <p className="text-brand-text-muted text-[15px]">Enter your name to get started.</p>
-          </div>
-          <div>
-            <input
-              value={nameInput}
-              onChange={e => setNameInput(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleSetName() }}
-              placeholder="e.g. Jordan"
-              className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
-            />
-          </div>
-          <button
-            onClick={handleSetName}
-            disabled={!nameInput.trim()}
-            className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Continue
-          </button>
-        </div>
-        <footer className="mt-12 text-center">
-          <a href="https://elevatedigital.nyc" target="_blank" rel="noopener noreferrer" className="text-brand-text-faint text-xs hover:text-brand-text-muted transition-colors">
-            Built by Elevate Digital
-          </a>
-        </footer>
-      </div>
-    )
   }
 
   if (!loaded) return null
@@ -157,6 +136,32 @@ export function PathSelection() {
           onClick={() => handleSelect('intern')}
         />
       </div>
+
+      {pendingPath && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPendingPath(null)}>
+          <div className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full space-y-6" onClick={e => e.stopPropagation()}>
+            <div className="text-center">
+              <h2 className="font-heading text-2xl font-bold text-brand-text mb-2">What's your name?</h2>
+              <p className="text-brand-text-muted text-[15px]">This helps us save your progress.</p>
+            </div>
+            <input
+              value={nameInput}
+              onChange={e => setNameInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleSetName() }}
+              placeholder="e.g. Jordan"
+              autoFocus
+              className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+            />
+            <button
+              onClick={handleSetName}
+              disabled={!nameInput.trim()}
+              className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+      )}
 
       <footer className="mt-12 text-center">
         <a
