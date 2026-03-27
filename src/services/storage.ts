@@ -25,7 +25,7 @@ function sessionFromRow(row: Record<string, unknown>): Session {
   return {
     id: row.id as string,
     path: row.path as Session['path'],
-    userSlug: row.user_slug as string | undefined,
+    userId: row.user_id as string | undefined,
     brandData: (row.brand_data ?? {}) as Session['brandData'],
     sections: (row.sections ?? {}) as Session['sections'],
     currentSection: row.current_section as string,
@@ -41,7 +41,7 @@ function sessionToRow(session: Partial<Session> & { id?: string }) {
   const row: Record<string, unknown> = {}
   if (session.id !== undefined) row.id = session.id
   if (session.path !== undefined) row.path = session.path
-  if (session.userSlug !== undefined) row.user_slug = session.userSlug
+  if (session.userId !== undefined) row.user_id = session.userId
   if (session.brandData !== undefined) row.brand_data = session.brandData
   if (session.sections !== undefined) row.sections = session.sections
   if (session.currentSection !== undefined) row.current_section = session.currentSection
@@ -73,11 +73,11 @@ function conversationToRow(id: string, convo: Omit<Conversation, 'id'>) {
 
 // === Sessions ===
 
-async function createSession(path: Session['path'], userSlug?: string): Promise<Session> {
+async function createSession(path: Session['path'], userId?: string): Promise<Session> {
   const session: Session = {
     id: generateId(),
     path,
-    userSlug,
+    userId,
     brandData: {},
     sections: buildInitialSections(),
     currentSection: 'basics',
@@ -88,7 +88,7 @@ async function createSession(path: Session['path'], userSlug?: string): Promise<
   const { error } = await supabase.from('sessions').insert({
     id: session.id,
     path: session.path,
-    user_slug: session.userSlug,
+    user_id: session.userId,
     brand_data: session.brandData,
     sections: session.sections,
     current_section: session.currentSection,
@@ -121,14 +121,14 @@ async function updateSession(id: string, updates: Partial<Omit<Session, 'id' | '
   if (error) throw new Error(`Failed to update session: ${error.message}`)
 }
 
-async function listSessions(userSlug?: string): Promise<Session[]> {
+async function listSessions(userId?: string): Promise<Session[]> {
   let query = supabase
     .from('sessions')
     .select('*')
     .order('updated_at', { ascending: false })
 
-  if (userSlug) {
-    query = query.eq('user_slug', userSlug)
+  if (userId) {
+    query = query.eq('user_id', userId)
   }
 
   const { data, error } = await query
