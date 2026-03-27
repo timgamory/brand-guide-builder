@@ -31,6 +31,7 @@ function sessionFromRow(row: Record<string, unknown>): Session {
     currentSection: row.current_section as string,
     internMeta: row.intern_meta as Session['internMeta'],
     reviewToken: row.review_token as string | undefined,
+    generatedDocument: row.generated_document as string | undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   }
@@ -46,6 +47,7 @@ function sessionToRow(session: Partial<Session> & { id?: string }) {
   if (session.currentSection !== undefined) row.current_section = session.currentSection
   if (session.internMeta !== undefined) row.intern_meta = session.internMeta
   if (session.reviewToken !== undefined) row.review_token = session.reviewToken
+  if (session.generatedDocument !== undefined) row.generated_document = session.generatedDocument
   return row
 }
 
