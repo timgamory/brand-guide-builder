@@ -3,6 +3,7 @@ import type { Session, Path, SectionStatus, BrandData, InternMeta } from '../typ
 import { createSession, getSession, updateSession, listSessions, deleteSession } from '../services/storage'
 import { getUserSlug } from '../services/userSlug'
 import { SECTIONS } from '../data/sections'
+import { generateMarkdown } from '../services/documentGenerator'
 
 type BrandGuideState = {
   session: Session | null
@@ -93,8 +94,10 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
       ...session.sections,
       [sectionId]: { ...session.sections[sectionId], status },
     }
-    await updateSession(session.id, { sections })
-    set({ session: { ...session, sections, updatedAt: new Date().toISOString() } })
+    const updatedSession = { ...session, sections }
+    const generatedDocument = generateMarkdown(updatedSession)
+    await updateSession(session.id, { sections, generatedDocument })
+    set({ session: { ...updatedSession, generatedDocument, updatedAt: new Date().toISOString() } })
   },
 
   approveSectionDraft: async (sectionId, draft) => {
@@ -104,8 +107,10 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
       ...session.sections,
       [sectionId]: { ...session.sections[sectionId], status: 'approved' as const, approvedDraft: draft },
     }
-    await updateSession(session.id, { sections })
-    set({ session: { ...session, sections, updatedAt: new Date().toISOString() } })
+    const updatedSession = { ...session, sections }
+    const generatedDocument = generateMarkdown(updatedSession)
+    await updateSession(session.id, { sections, generatedDocument })
+    set({ session: { ...updatedSession, generatedDocument, updatedAt: new Date().toISOString() } })
   },
 
   setInternMeta: async (meta) => {
@@ -122,8 +127,10 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
       ...session.sections,
       [sectionId]: { ...session.sections[sectionId], status: 'skipped' as const },
     }
-    await updateSession(session.id, { sections })
-    set({ session: { ...session, sections, updatedAt: new Date().toISOString() } })
+    const updatedSession = { ...session, sections }
+    const generatedDocument = generateMarkdown(updatedSession)
+    await updateSession(session.id, { sections, generatedDocument })
+    set({ session: { ...updatedSession, generatedDocument, updatedAt: new Date().toISOString() } })
     await get().nextSection()
   },
 
