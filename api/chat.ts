@@ -1,5 +1,7 @@
 export const config = { runtime: 'edge' }
 
+import { createClient } from '@supabase/supabase-js'
+
 const MAX_BODY_SIZE = 100_000 // 100KB
 const MAX_MESSAGES = 50
 const MAX_SYSTEM_PROMPT_LENGTH = 10_000
@@ -54,6 +56,41 @@ function validateMessages(messages: unknown): messages is Array<{ role: string; 
   )
 }
 
+// Analytics: SUPABASE_SERVICE_ROLE_KEY must be added to Vercel env vars
+function getAnalyticsClient() {
+  const url = process.env.VITE_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) return null
+  return createClient(url, key)
+}
+
+function trackEvent(sessionId: string | null, eventType: string, payload: Record<string, unknown>) {
+  try {
+    const client = getAnalyticsClient()
+    if (!client) return
+    client.from('analytics_events').insert({
+      session_id: sessionId,
+      event_type: eventType,
+      payload,
+    }).then(
+      () => {},
+      () => {},
+    )
+  } catch {
+    // Never let analytics break the proxy
+  }
+}
+
+function hashIp(ip: string): string {
+  let hash = 0
+  for (let i = 0; i < ip.length; i++) {
+    const char = ip.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash |= 0
+  }
+  return hash.toString(36)
+}
+
 function errorResponse(message: string, status: number) {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -74,7 +111,9 @@ export default async function handler(req: Request) {
 
   // Rate limiting
   const ip = getClientIp(req)
+  const sessionId = req.headers.get('x-session-id') || null
   if (isRateLimited(ip)) {
+    trackEvent(sessionId, 'api.rate_limited', { ipHash: hashIp(ip) })
     return errorResponse('Too many requests. Please wait a minute.', 429)
   }
 
@@ -132,11 +171,16 @@ export default async function handler(req: Request) {
 
     if (!response.ok) {
       const status = response.status
-      // Don't leak Anthropic error details to client
+      trackEvent(sessionId, 'api.error', {
+        statusCode: status,
+        errorType: status === 429 ? 'rate_limited' : status === 401 ? 'auth' : 'server',
+      })
       if (status === 429) return errorResponse('AI service is busy. Please try again shortly.', 429)
       if (status === 401) return errorResponse('API configuration error', 500)
       return errorResponse('AI service error', 502)
     }
+
+    trackEvent(sessionId, 'api.request', { model: 'claude-sonnet-4-6' })
 
     return new Response(response.body, {
       headers: {
@@ -146,6 +190,7 @@ export default async function handler(req: Request) {
       },
     })
   } catch {
+    trackEvent(sessionId, 'api.error', { statusCode: 500, errorType: 'exception' })
     return errorResponse('Request failed', 500)
   }
 }

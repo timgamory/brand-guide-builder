@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { Message } from '../types'
 import { extractJsonObject } from './jsonExtract'
+import { useBrandGuideStore } from '../stores/brandGuideStore'
 
 let client: Anthropic | null = null
 
@@ -49,7 +50,10 @@ async function sendViaProxy(
 ): Promise<string> {
   const response = await fetch('/api/chat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Session-Id': useBrandGuideStore.getState().session?.id ?? '',
+    },
     body: JSON.stringify({
       system: systemPrompt,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
