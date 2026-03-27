@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Message, ResearchTask, ResearchTaskType } from '../types'
 import { getConversation, saveConversation } from '../services/storage'
+import { track } from '../services/analytics'
 
 type ConversationState = {
   messages: Message[]
@@ -75,6 +76,14 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       t.id === taskId ? { ...t, completed: !t.completed } : t
     )
     set({ researchTasks: updated })
+    const task = updated.find(t => t.id === taskId)
+    if (task?.completed) {
+      track('research.task_completed', {
+        sectionId: currentSectionId,
+        taskId,
+        hasNotes: !!task.notes,
+      }, currentSessionId ?? undefined)
+    }
     await saveConversation(currentSessionId, currentSectionId, { messages, researchTasks: updated })
   },
 

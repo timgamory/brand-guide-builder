@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { getReflections, saveReflection } from '../services/storage'
+import { track } from '../services/analytics'
 
 type ReflectionState = {
   entries: Record<string, string>  // sectionId -> text
@@ -28,6 +29,10 @@ export const useReflectionStore = create<ReflectionState>((set, get) => ({
     const { currentSessionId, entries } = get()
     if (!currentSessionId) return
     await saveReflection(currentSessionId, sectionId, text)
+    track('reflection.saved', {
+      sectionId,
+      length: text.length,
+    }, currentSessionId ?? undefined)
     set({ entries: { ...entries, [sectionId]: text } })
   },
 

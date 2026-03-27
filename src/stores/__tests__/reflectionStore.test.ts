@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+vi.mock('../../services/analytics', () => ({
+  track: vi.fn(),
+}))
+
 vi.mock('../../services/storage', () => ({
   getReflections: vi.fn().mockResolvedValue(undefined),
   saveReflection: vi.fn().mockResolvedValue(undefined),
