@@ -4,21 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that uses Claude to conduct adaptive brand interviews and generate professional brand guidelines. Deployed on Vercel with server-side API proxy.
+AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that uses Claude to conduct adaptive brand interviews and generate professional brand guidelines. Built by [Elevate Digital](https://elevatedigital.nyc). Deployed on Vercel with Supabase backend.
 
 ## Commands
 
 - `npm run dev` — Start dev server (Vite, port 5173)
 - `npm run build` — Production build (`tsc -b && vite build`)
-- `npx vitest run` — Run all tests (62 tests across 12 files)
+- `npx vitest run` — Run all tests (60 tests across 12 files)
 - `npx vitest run src/path/to/test.ts` — Run single test file
 - `npx tsc -b` — Type check (use `-b` not `--noEmit` — matches the build command and catches unused variables)
 
 ## Architecture
 
-**Stack**: Vite + React 18 + TypeScript + Tailwind CSS 4 + shadcn/ui + Zustand + Dexie.js + React Router + Anthropic JS SDK + docx
+**Stack**: Vite + React 18 + TypeScript + Tailwind CSS 4 + shadcn/ui + Zustand + Supabase + React Router + Anthropic JS SDK + docx
 
-**Data flow**: Zustand stores (reactive UI) hydrate from and write-through to Dexie.js (IndexedDB). WizardShell hydrates the most recent session on mount so page refreshes work. Anthropic API called via Vercel Edge Function proxy (`api/chat.ts`) with server-side API key, or directly from browser if user has a local key in localStorage.
+**Data flow**: Zustand stores (reactive UI) hydrate from and write-through to Supabase (Postgres). WizardShell hydrates the most recent session on mount so page refreshes work. Sessions are scoped to users via URL slugs (`/start/:slug`) stored in localStorage. Anthropic API called via Vercel Edge Function proxy (`api/chat.ts`) with server-side API key, or directly from browser if user has a local key in localStorage (model: `claude-sonnet-4-6`).
 
 **Key patterns**:
 - Section definitions in `src/data/sections.ts` drive both AI conversation (field keys = data to extract) and fallback form mode
@@ -46,6 +46,7 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 - `docs/plans/2026-03-26-phase-3-full-sections.md` — Phase 3: Full 11-section coverage
 - `docs/plans/2026-03-26-phase-4-polish.md` — Phase 4: Skip, summarization, consistency check, presentation view
 - `docs/plans/2026-03-26-phase-4-polish-design.md` — Phase 4 design rationale
+- `docs/plans/2026-03-26-supabase-backend-design.md` — Supabase backend schema, RLS, and env vars
 
 ## Visual Identity
 
@@ -53,4 +54,9 @@ Warm off-white background (#faf8f5), Fraunces (headings) + DM Sans (body), slate
 
 ## Deployment
 
-Vercel auto-deploys from `main` branch on GitHub (`timgamory/brand-guide-builder`). SPA routing handled by `vercel.json` rewrites. API proxy at `/api/chat`.
+Vercel auto-deploys from `main` branch on GitHub (`timgamory/brand-guide-builder`). SPA routing handled by `vercel.json` rewrites. API proxy at `/api/chat`. Live at `elevate-brand.vercel.app`.
+
+**Env vars** (set in Vercel project settings):
+- `ANTHROPIC_API_KEY` — server-side, used by API proxy
+- `VITE_SUPABASE_URL` — Supabase project URL (public, baked into client build)
+- `VITE_SUPABASE_ANON_KEY` — Supabase anon key (public, baked into client build)
