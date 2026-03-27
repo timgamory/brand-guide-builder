@@ -34,6 +34,7 @@ export function WizardSection() {
   const [review, setReview] = useState<SectionReviewResponse | null>(null)
   const [apiError, setApiError] = useState(false)
   const [reflectionText, setReflectionText] = useState('')
+  const [revisionCount, setRevisionCount] = useState(0)
 
   const section = sectionId ? getSection(sectionId) : undefined
 
@@ -43,6 +44,7 @@ export function WizardSection() {
     loadConversation(session.id, sectionId)
     setReview(null)
     setApiError(false)
+    setRevisionCount(0)
     track('section.started', { sectionId })
 
     if (session.path === 'intern') {
@@ -163,17 +165,18 @@ export function WizardSection() {
       await useReflectionStore.getState().setReflection(sectionId, reflectionText.trim())
     }
     const messageCount = useConversationStore.getState().messages.length
-    track('section.approved', { sectionId, messageCount, draftLength: draft.length })
+    track('section.approved', { sectionId, messageCount, draftLength: draft.length, revisionNumber: revisionCount })
     await approveSectionDraft(sectionId, draft)
     const store = useBrandGuideStore.getState()
     await store.nextSection()
     const next = useBrandGuideStore.getState().session?.currentSection
     if (next) navigate(`/wizard/${next}`)
-  }, [sectionId, approveSectionDraft, navigate, isIntern, reflectionText])
+  }, [sectionId, approveSectionDraft, navigate, isIntern, reflectionText, revisionCount])
 
   const handleRevise = useCallback(async (direction: string) => {
     setMode(isIntern ? 'synthesis' : 'interview')
     setReview(null)
+    setRevisionCount(prev => prev + 1)
     await handleSend(`Please revise the draft: ${direction}`)
   }, [handleSend, isIntern])
 

@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import type { Message } from '../types'
 import { extractJsonObject } from './jsonExtract'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
+import { useConversationStore } from '../stores/conversationStore'
 
 let client: Anthropic | null = null
 
@@ -53,6 +54,7 @@ async function sendViaProxy(
     headers: {
       'Content-Type': 'application/json',
       'X-Session-Id': useBrandGuideStore.getState().session?.id ?? '',
+      'X-Section-Id': useConversationStore.getState().currentSectionId ?? '',
     },
     body: JSON.stringify({
       system: systemPrompt,

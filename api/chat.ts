@@ -112,8 +112,9 @@ export default async function handler(req: Request) {
   // Rate limiting
   const ip = getClientIp(req)
   const sessionId = req.headers.get('x-session-id') || null
+  const sectionId = req.headers.get('x-section-id') || null
   if (isRateLimited(ip)) {
-    trackEvent(sessionId, 'api.rate_limited', { ipHash: hashIp(ip) })
+    trackEvent(sessionId, 'api.rate_limited', { sectionId, ipHash: hashIp(ip) })
     return errorResponse('Too many requests. Please wait a minute.', 429)
   }
 
@@ -172,6 +173,7 @@ export default async function handler(req: Request) {
     if (!response.ok) {
       const status = response.status
       trackEvent(sessionId, 'api.error', {
+        sectionId,
         statusCode: status,
         errorType: status === 429 ? 'rate_limited' : status === 401 ? 'auth' : 'server',
       })
@@ -180,7 +182,7 @@ export default async function handler(req: Request) {
       return errorResponse('AI service error', 502)
     }
 
-    trackEvent(sessionId, 'api.request', { model: 'claude-sonnet-4-6' })
+    trackEvent(sessionId, 'api.request', { sectionId, model: 'claude-sonnet-4-6' })
 
     return new Response(response.body, {
       headers: {
@@ -190,7 +192,7 @@ export default async function handler(req: Request) {
       },
     })
   } catch {
-    trackEvent(sessionId, 'api.error', { statusCode: 500, errorType: 'exception' })
+    trackEvent(sessionId, 'api.error', { sectionId, statusCode: 500, errorType: 'exception' })
     return errorResponse('Request failed', 500)
   }
 }

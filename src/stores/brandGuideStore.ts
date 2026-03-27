@@ -36,7 +36,7 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const userSlug = getUserSlug() ?? undefined
     const session = await createSession(path, userSlug)
     set({ session, isLoading: false })
-    track('session.created', { path, userSlug: userSlug ?? null }, session.id)
+    track('session.created', { path }, session.id)
   },
 
   loadSession: async (id) => {
