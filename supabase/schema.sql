@@ -11,6 +11,7 @@ CREATE TABLE sessions (
   intern_meta JSONB,
   review_token TEXT,
   user_slug TEXT,
+  generated_document TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
