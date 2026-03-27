@@ -43,6 +43,7 @@ export type Session = {
   currentSection: string
   internMeta?: InternMeta
   reviewToken?: string
+  generatedDocument?: string
   createdAt: string
   updatedAt: string
 }
