@@ -50,6 +50,224 @@ function SessionCard({ session, onResume, onDelete }: { session: Session; onResu
   )
 }
 
+/* ─── Section components ─── */
+
+function HeroSection() {
+  return (
+    <section className="px-6 pt-24 pb-16 md:pt-32 md:pb-20">
+      <div className="max-w-2xl mx-auto text-center">
+        <h1 className="font-heading text-4xl md:text-5xl font-bold text-brand-text leading-tight mb-6">
+          Your brand already exists.<br />It just needs a guide.
+        </h1>
+        <p className="text-brand-text-secondary text-lg leading-relaxed max-w-xl mx-auto mb-8">
+          You already know what your business stands for. Brand Guide Builder draws it out through conversation and turns it into a professional document you can share with your team, your designer, or your website.
+        </p>
+        <a
+          href="#get-started"
+          className="inline-block bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors"
+        >
+          Build Your Brand Guide
+        </a>
+      </div>
+    </section>
+  )
+}
+
+function WhySection() {
+  const cards = [
+    {
+      title: 'Stop explaining yourself differently every time',
+      body: 'Your website says one thing, your social media says another, and your elevator pitch changes weekly. A brand guide locks in the language so everyone\u2019s on the same page.',
+    },
+    {
+      title: 'Give your designer something to work with',
+      body: 'When you hire someone to build your website or design a flyer, a brand guide tells them exactly what your brand sounds like, looks like, and stands for \u2014 no guesswork.',
+    },
+    {
+      title: 'Look like you\u2019ve been doing this for years',
+      body: 'A clear, consistent brand makes a two-person shop look as polished as a company ten times its size.',
+    },
+  ]
+
+  return (
+    <section className="bg-brand-bg-warm px-6 py-16 md:py-20">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="font-heading text-3xl font-bold text-brand-text text-center mb-12">
+          Why a brand guide?
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {cards.map((c, i) => (
+            <div key={i} className="bg-white rounded-2xl p-6 border border-brand-border shadow-sm">
+              <h3 className="font-heading text-lg font-semibold text-brand-text mb-2 leading-snug">{c.title}</h3>
+              <p className="text-brand-text-muted text-[15px] leading-relaxed">{c.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function HowItWorksSection() {
+  const steps = [
+    {
+      num: '01',
+      title: 'Have a conversation',
+      body: 'Answer questions about your business the way you\u2019d talk to a friend. The AI asks follow-ups, offers suggestions when you\u2019re stuck, and never uses jargon.',
+    },
+    {
+      num: '02',
+      title: 'Review your drafts',
+      body: 'After each topic, you\u2019ll see a polished draft of that section. Edit it, ask for revisions, or approve it and move on.',
+    },
+    {
+      num: '03',
+      title: 'Download your guide',
+      body: 'When all sections are complete, download a professional brand guide document ready to share with your team or designer.',
+    },
+  ]
+
+  return (
+    <section className="px-6 py-16 md:py-20">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="font-heading text-3xl font-bold text-brand-text text-center mb-12">
+          How it works
+        </h2>
+        <div className="grid gap-8 md:grid-cols-3">
+          {steps.map((s) => (
+            <div key={s.num}>
+              <span className="font-heading text-3xl font-bold text-brand-accent-coral">{s.num}</span>
+              <h3 className="font-heading text-lg font-semibold text-brand-text mt-2 mb-2">{s.title}</h3>
+              <p className="text-brand-text-muted text-[15px] leading-relaxed">{s.body}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-brand-text-muted text-center mt-10 text-[15px]">
+          Most people finish in 2&ndash;3 sessions. No branding experience needed.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+function WhatYouGetSection() {
+  const sectionList = [
+    { title: 'The Basics', desc: 'Name, industry, and who you serve' },
+    { title: 'Your Story', desc: 'Why you started and what drives you' },
+    { title: 'What You Stand For', desc: 'The values behind every decision' },
+    { title: 'Brand Personality', desc: 'How your brand acts and feels' },
+    { title: 'Colors', desc: 'Your palette and when to use each color' },
+    { title: 'Logo', desc: 'Usage rules and what to avoid' },
+    { title: 'Typography', desc: 'Fonts that match your voice' },
+    { title: 'Messaging', desc: 'Tagline, elevator pitch, key messages' },
+    { title: 'Application', desc: 'Real-world usage examples' },
+    { title: 'Social Media', desc: 'Voice and style for each platform' },
+    { title: 'Photography', desc: 'The visual feel of your brand' },
+  ]
+
+  return (
+    <section className="bg-brand-bg-warm px-6 py-16 md:py-20">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="font-heading text-3xl font-bold text-brand-text text-center mb-12">
+          What you'll get
+        </h2>
+
+        {/* Mockup card */}
+        <div className="flex justify-center mb-14">
+          <div className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full rotate-[-1deg]">
+            <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-brand-text-muted mb-1">Brand Guide</p>
+            <h3 className="font-heading text-2xl font-bold text-brand-text mb-5">Bright Path Consulting</h3>
+
+            <div className="border-t border-brand-border pt-4 mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Brand Story</p>
+              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+                Founded in 2019, Bright Path helps small businesses find clarity in their next chapter.
+              </p>
+            </div>
+            <div className="border-t border-brand-border pt-4 mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Values</p>
+              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+                Honesty, accessibility, and real talk over corporate jargon.
+              </p>
+            </div>
+            <div className="border-t border-brand-border pt-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Voice</p>
+              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+                Warm but direct. Like a smart friend who happens to know branding.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Section grid */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {sectionList.map((s, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <span className="text-brand-accent-sage mt-0.5 shrink-0">&#10003;</span>
+              <div>
+                <p className="font-semibold text-brand-text text-[15px]">{s.title}</p>
+                <p className="text-brand-text-muted text-sm">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function GetStartedSection({
+  sessions,
+  onSelect,
+  onResume,
+  onDelete,
+}: {
+  sessions: Session[]
+  onSelect: (path: Path) => void
+  onResume: (id: string) => void
+  onDelete: (id: string) => void
+}) {
+  return (
+    <section id="get-started" className="px-6 py-16 md:py-20">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="font-heading text-3xl font-bold text-brand-text text-center mb-12">
+          Ready to start?
+        </h2>
+
+        {sessions.length > 0 && (
+          <div className="max-w-2xl mx-auto mb-10 space-y-3">
+            <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Continue where you left off</h3>
+            {sessions.map(s => (
+              <SessionCard key={s.id} session={s} onResume={() => onResume(s.id)} onDelete={() => onDelete(s.id)} />
+            ))}
+          </div>
+        )}
+
+        <div className="flex gap-6 flex-wrap justify-center">
+          <PathCard
+            title="I'm building my own brand guide"
+            description="Work directly with an AI brand strategist who'll draw out what you already know and turn it into polished brand language."
+            details={['15-25 minute guided interview', 'Professional brand guide download', 'No design experience needed']}
+            onClick={() => onSelect('entrepreneur')}
+          />
+          <PathCard
+            title="I'm building a brand guide for someone else"
+            description="Get guided through a research process: what questions to ask, what to observe, and how to synthesize your findings into professional brand language."
+            details={['Structured research assignments', 'AI coaching through synthesis', 'Fellow review and approval flow', 'Reflection document for your portfolio']}
+            onClick={() => onSelect('intern')}
+          />
+        </div>
+
+        <p className="text-brand-text-muted text-center mt-8 text-[15px]">
+          Your progress is saved automatically. Come back anytime.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+/* ─── Main page ─── */
+
 export function PathSelection() {
   const navigate = useNavigate()
   const { createNewSession, loadSession, loadSessions, deleteSessionById, sessions } = useBrandGuideStore()
@@ -107,35 +325,17 @@ export function PathSelection() {
   if (!loaded) return null
 
   return (
-    <div className="min-h-screen bg-brand-bg font-body flex flex-col items-center justify-center p-8">
-      <div className="text-center mb-10">
-        <h1 className="font-heading text-4xl font-bold text-brand-text mb-2">Brand Guide Builder</h1>
-        <p className="text-brand-text-muted text-lg">Create professional brand guidelines, step by step.</p>
-      </div>
-
-      {sessions.length > 0 && (
-        <div className="w-full max-w-2xl mb-10 space-y-3">
-          <h2 className="font-heading text-lg font-semibold text-brand-text mb-2">Continue where you left off</h2>
-          {sessions.map(s => (
-            <SessionCard key={s.id} session={s} onResume={() => handleResume(s.id)} onDelete={() => handleDelete(s.id)} />
-          ))}
-        </div>
-      )}
-
-      <div className="flex gap-6 flex-wrap justify-center">
-        <PathCard
-          title="I'm building my own brand guide"
-          description="Work directly with an AI brand strategist who'll draw out what you already know and turn it into polished brand language."
-          details={['15-25 minute guided interview', 'Professional brand guide download', 'No design experience needed']}
-          onClick={() => handleSelect('entrepreneur')}
-        />
-        <PathCard
-          title="I'm building a brand guide for someone else"
-          description="Get guided through a research process: what questions to ask, what to observe, and how to synthesize your findings into professional brand language."
-          details={['Structured research assignments', 'AI coaching through synthesis', 'Fellow review and approval flow', 'Reflection document for your portfolio']}
-          onClick={() => handleSelect('intern')}
-        />
-      </div>
+    <div className="min-h-screen bg-brand-bg font-body">
+      <HeroSection />
+      <WhySection />
+      <HowItWorksSection />
+      <WhatYouGetSection />
+      <GetStartedSection
+        sessions={sessions}
+        onSelect={handleSelect}
+        onResume={handleResume}
+        onDelete={handleDelete}
+      />
 
       {pendingPath && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPendingPath(null)}>
@@ -163,7 +363,7 @@ export function PathSelection() {
         </div>
       )}
 
-      <footer className="mt-12 text-center">
+      <footer className="py-8 text-center">
         <a
           href="https://elevatedigital.nyc"
           target="_blank"
