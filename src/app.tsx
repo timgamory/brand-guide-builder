@@ -7,13 +7,13 @@ import { GuidePreview } from './pages/GuidePreview'
 import { InternSetup } from './pages/InternSetup'
 import { FellowReview } from './pages/FellowReview'
 import { PresentationView } from './pages/PresentationView'
-import { StartPage } from './pages/StartPage'
+import { AuthCallback } from './pages/AuthCallback'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<PathSelection />} />
-      <Route path="/start/:slug" element={<StartPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/setup" element={<ApiKeySetup />} />
       <Route path="/intern-setup" element={<InternSetup />} />
       <Route path="/wizard" element={<WizardShell />}>
