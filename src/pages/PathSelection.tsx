@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
-import { getUserSlug, setUserSlug } from '../services/userSlug'
+import { useAuth } from '../hooks/useAuth'
+import type { User } from '@supabase/supabase-js'
 import type { Path, Session } from '../types'
 
 function PathCard({
@@ -216,12 +217,73 @@ function WhatYouGetSection() {
   )
 }
 
+function LoginForm() {
+  const { signInWithMagicLink } = useAuth()
+  const [email, setEmail] = useState('')
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [sending, setSending] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.trim()) return
+    setSending(true)
+    setError(null)
+    const { error: authError } = await signInWithMagicLink(email.trim())
+    setSending(false)
+    if (authError) {
+      setError(authError.message)
+    } else {
+      setSent(true)
+    }
+  }
+
+  if (sent) {
+    return (
+      <div className="text-center space-y-3">
+        <h3 className="font-heading text-xl font-semibold text-brand-text">Check your email</h3>
+        <p className="text-brand-text-secondary text-[15px]">
+          We sent a magic link to <strong>{email}</strong>. Click it to sign in.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-sm mx-auto space-y-4">
+      <div className="text-center mb-2">
+        <h3 className="font-heading text-xl font-semibold text-brand-text">Enter your email to get started</h3>
+        <p className="text-brand-text-muted text-[15px] mt-1">We'll send you a magic link — no password needed.</p>
+      </div>
+      <input
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="you@example.com"
+        required
+        autoFocus
+        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+      />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      <button
+        type="submit"
+        disabled={sending || !email.trim()}
+        className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {sending ? 'Sending...' : 'Send Magic Link'}
+      </button>
+    </form>
+  )
+}
+
 function GetStartedSection({
+  user,
   sessions,
   onSelect,
   onResume,
   onDelete,
 }: {
+  user: User | null
   sessions: Session[]
   onSelect: (path: Path) => void
   onResume: (id: string) => void
@@ -234,33 +296,39 @@ function GetStartedSection({
           Ready to start?
         </h2>
 
-        {sessions.length > 0 && (
-          <div className="max-w-2xl mx-auto mb-10 space-y-3">
-            <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Continue where you left off</h3>
-            {sessions.map(s => (
-              <SessionCard key={s.id} session={s} onResume={() => onResume(s.id)} onDelete={() => onDelete(s.id)} />
-            ))}
-          </div>
+        {!user ? (
+          <LoginForm />
+        ) : (
+          <>
+            {sessions.length > 0 && (
+              <div className="max-w-2xl mx-auto mb-10 space-y-3">
+                <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Continue where you left off</h3>
+                {sessions.map(s => (
+                  <SessionCard key={s.id} session={s} onResume={() => onResume(s.id)} onDelete={() => onDelete(s.id)} />
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-6 flex-wrap justify-center">
+              <PathCard
+                title="I'm building my own brand guide"
+                description="Work directly with an AI brand strategist who'll draw out what you already know and turn it into polished brand language."
+                details={['15-25 minute guided interview', 'Professional brand guide download', 'No design experience needed']}
+                onClick={() => onSelect('entrepreneur')}
+              />
+              <PathCard
+                title="I'm building a brand guide for someone else"
+                description="Get guided through a research process: what questions to ask, what to observe, and how to synthesize your findings into professional brand language."
+                details={['Structured research assignments', 'AI coaching through synthesis', 'Fellow review and approval flow', 'Reflection document for your portfolio']}
+                onClick={() => onSelect('intern')}
+              />
+            </div>
+
+            <p className="text-brand-text-muted text-center mt-8 text-[15px]">
+              Your progress is saved automatically. Come back anytime.
+            </p>
+          </>
         )}
-
-        <div className="flex gap-6 flex-wrap justify-center">
-          <PathCard
-            title="I'm building my own brand guide"
-            description="Work directly with an AI brand strategist who'll draw out what you already know and turn it into polished brand language."
-            details={['15-25 minute guided interview', 'Professional brand guide download', 'No design experience needed']}
-            onClick={() => onSelect('entrepreneur')}
-          />
-          <PathCard
-            title="I'm building a brand guide for someone else"
-            description="Get guided through a research process: what questions to ask, what to observe, and how to synthesize your findings into professional brand language."
-            details={['Structured research assignments', 'AI coaching through synthesis', 'Fellow review and approval flow', 'Reflection document for your portfolio']}
-            onClick={() => onSelect('intern')}
-          />
-        </div>
-
-        <p className="text-brand-text-muted text-center mt-8 text-[15px]">
-          Your progress is saved automatically. Come back anytime.
-        </p>
       </div>
     </section>
   )
@@ -270,38 +338,31 @@ function GetStartedSection({
 
 export function PathSelection() {
   const navigate = useNavigate()
+  const { user, isLoading: authLoading } = useAuth()
   const { createNewSession, loadSession, loadSessions, deleteSessionById, sessions } = useBrandGuideStore()
   const [loaded, setLoaded] = useState(false)
-  const [slug, setSlug] = useState<string | null>(getUserSlug())
-  const [nameInput, setNameInput] = useState('')
-  const [pendingPath, setPendingPath] = useState<Path | null>(null)
 
+  // Load sessions when authenticated
   useEffect(() => {
-    if (slug) {
+    if (authLoading) return
+    if (user) {
       loadSessions().then(() => setLoaded(true))
     } else {
       setLoaded(true)
     }
-  }, [slug, loadSessions])
+  }, [user, authLoading, loadSessions])
 
-  const handleSetName = async () => {
-    const trimmed = nameInput.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-    if (!trimmed || !pendingPath) return
-    setUserSlug(trimmed)
-    setSlug(trimmed)
-    await createNewSession(pendingPath)
-    if (pendingPath === 'intern') {
-      navigate('/intern-setup')
-    } else {
-      navigate('/wizard/basics')
+  // Auto-redirect if authenticated with an existing session
+  useEffect(() => {
+    if (!authLoading && user && loaded && sessions.length > 0) {
+      const mostRecent = sessions[0]
+      loadSession(mostRecent.id).then(() => {
+        navigate(`/wizard/${mostRecent.currentSection}`, { replace: true })
+      })
     }
-  }
+  }, [authLoading, user, loaded, sessions, loadSession, navigate])
 
   const handleSelect = async (path: Path) => {
-    if (!slug) {
-      setPendingPath(path)
-      return
-    }
     await createNewSession(path)
     if (path === 'intern') {
       navigate('/intern-setup')
@@ -312,8 +373,8 @@ export function PathSelection() {
 
   const handleResume = async (id: string) => {
     await loadSession(id)
-    const session = useBrandGuideStore.getState().session
-    navigate(`/wizard/${session?.currentSection ?? 'basics'}`)
+    const s = useBrandGuideStore.getState().session
+    navigate(`/wizard/${s?.currentSection ?? 'basics'}`)
   }
 
   const handleDelete = async (id: string) => {
@@ -322,7 +383,7 @@ export function PathSelection() {
     }
   }
 
-  if (!loaded) return null
+  if (authLoading || !loaded) return null
 
   return (
     <div className="min-h-screen bg-brand-bg font-body">
@@ -331,37 +392,12 @@ export function PathSelection() {
       <HowItWorksSection />
       <WhatYouGetSection />
       <GetStartedSection
+        user={user}
         sessions={sessions}
         onSelect={handleSelect}
         onResume={handleResume}
         onDelete={handleDelete}
       />
-
-      {pendingPath && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPendingPath(null)} onKeyDown={e => { if (e.key === 'Escape') setPendingPath(null) }}>
-          <div role="dialog" aria-modal="true" aria-labelledby="name-modal-title" className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full space-y-6" onClick={e => e.stopPropagation()}>
-            <div className="text-center">
-              <h2 id="name-modal-title" className="font-heading text-2xl font-bold text-brand-text mb-2">What's your name?</h2>
-              <p className="text-brand-text-muted text-[15px]">This helps us save your progress.</p>
-            </div>
-            <input
-              value={nameInput}
-              onChange={e => setNameInput(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleSetName() }}
-              placeholder="e.g. Jordan"
-              autoFocus
-              className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
-            />
-            <button
-              onClick={handleSetName}
-              disabled={!nameInput.trim()}
-              className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      )}
 
       <footer className="py-8 text-center">
         <a
