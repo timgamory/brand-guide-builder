@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { Session, Path, SectionStatus, BrandData, InternMeta } from '../types'
 import { createSession, getSession, updateSession, listSessions, deleteSession } from '../services/storage'
-import { getUserSlug } from '../services/userSlug'
+import { supabase } from '../services/supabase'
 import { SECTIONS } from '../data/sections'
 import { generateMarkdown } from '../services/documentGenerator'
 import { track } from '../services/analytics'
@@ -33,8 +33,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
 
   createNewSession: async (path) => {
     set({ isLoading: true })
-    const userSlug = getUserSlug() ?? undefined
-    const session = await createSession(path, userSlug)
+    const { data: { user } } = await supabase.auth.getUser()
+    const session = await createSession(path, user?.id)
     set({ session, isLoading: false })
     track('session.created', { path }, session.id)
   },
@@ -46,8 +46,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
   },
 
   loadSessions: async () => {
-    const userSlug = getUserSlug() ?? undefined
-    const sessions = await listSessions(userSlug)
+    const { data: { user } } = await supabase.auth.getUser()
+    const sessions = await listSessions(user?.id)
     set({ sessions })
   },
 
@@ -152,8 +152,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const { session } = get()
     if (session) return
     set({ isLoading: true })
-    const userSlug = getUserSlug() ?? undefined
-    const sessions = await listSessions(userSlug)
+    const { data: { user } } = await supabase.auth.getUser()
+    const sessions = await listSessions(user?.id)
     if (sessions.length > 0) {
       set({ session: sessions[0], sessions, isLoading: false })
     } else {
