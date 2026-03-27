@@ -14,7 +14,7 @@ function PathCard({
       onClick={onClick}
       className="bg-white rounded-2xl p-8 border border-brand-border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left max-w-sm w-full cursor-pointer"
     >
-      <h2 className="font-heading text-2xl font-semibold text-brand-text mb-2">{title}</h2>
+      <h3 className="font-heading text-2xl font-semibold text-brand-text mb-2">{title}</h3>
       <p className="text-brand-text-secondary text-[15px] leading-relaxed mb-4">{description}</p>
       <ul className="space-y-1.5">
         {details.map((d, i) => (
@@ -73,22 +73,22 @@ function HeroSection() {
   )
 }
 
-function WhySection() {
-  const cards = [
-    {
-      title: 'Stop explaining yourself differently every time',
-      body: 'Your website says one thing, your social media says another, and your elevator pitch changes weekly. A brand guide locks in the language so everyone\u2019s on the same page.',
-    },
-    {
-      title: 'Give your designer something to work with',
-      body: 'When you hire someone to build your website or design a flyer, a brand guide tells them exactly what your brand sounds like, looks like, and stands for \u2014 no guesswork.',
-    },
-    {
-      title: 'Look like you\u2019ve been doing this for years',
-      body: 'A clear, consistent brand makes a two-person shop look as polished as a company ten times its size.',
-    },
-  ]
+const WHY_CARDS = [
+  {
+    title: 'Stop explaining yourself differently every time',
+    body: 'Your website says one thing, your social media says another, and your elevator pitch changes weekly. A brand guide locks in the language so everyone\u2019s on the same page.',
+  },
+  {
+    title: 'Give your designer something to work with',
+    body: 'When you hire someone to build your website or design a flyer, a brand guide tells them exactly what your brand sounds like, looks like, and stands for \u2014 no guesswork.',
+  },
+  {
+    title: 'Look like you\u2019ve been doing this for years',
+    body: 'A clear, consistent brand makes a two-person shop look as polished as a company ten times its size.',
+  },
+]
 
+function WhySection() {
   return (
     <section className="bg-brand-bg-warm px-6 py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
@@ -96,7 +96,7 @@ function WhySection() {
           Why a brand guide?
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
-          {cards.map((c, i) => (
+          {WHY_CARDS.map((c, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 border border-brand-border shadow-sm">
               <h3 className="font-heading text-lg font-semibold text-brand-text mb-2 leading-snug">{c.title}</h3>
               <p className="text-brand-text-muted text-[15px] leading-relaxed">{c.body}</p>
@@ -108,25 +108,25 @@ function WhySection() {
   )
 }
 
-function HowItWorksSection() {
-  const steps = [
-    {
-      num: '01',
-      title: 'Have a conversation',
-      body: 'Answer questions about your business the way you\u2019d talk to a friend. The AI asks follow-ups, offers suggestions when you\u2019re stuck, and never uses jargon.',
-    },
-    {
-      num: '02',
-      title: 'Review your drafts',
-      body: 'After each topic, you\u2019ll see a polished draft of that section. Edit it, ask for revisions, or approve it and move on.',
-    },
-    {
-      num: '03',
-      title: 'Download your guide',
-      body: 'When all sections are complete, download a professional brand guide document ready to share with your team or designer.',
-    },
-  ]
+const HOW_STEPS = [
+  {
+    num: '01',
+    title: 'Have a conversation',
+    body: 'Answer questions about your business the way you\u2019d talk to a friend. The AI asks follow-ups, offers suggestions when you\u2019re stuck, and never uses jargon.',
+  },
+  {
+    num: '02',
+    title: 'Review your drafts',
+    body: 'After each topic, you\u2019ll see a polished draft of that section. Edit it, ask for revisions, or approve it and move on.',
+  },
+  {
+    num: '03',
+    title: 'Download your guide',
+    body: 'When all sections are complete, download a professional brand guide document ready to share with your team or designer.',
+  },
+]
 
+function HowItWorksSection() {
   return (
     <section className="px-6 py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
@@ -134,7 +134,7 @@ function HowItWorksSection() {
           How it works
         </h2>
         <div className="grid gap-8 md:grid-cols-3">
-          {steps.map((s) => (
+          {HOW_STEPS.map((s) => (
             <div key={s.num}>
               <span className="font-heading text-3xl font-bold text-brand-accent-coral">{s.num}</span>
               <h3 className="font-heading text-lg font-semibold text-brand-text mt-2 mb-2">{s.title}</h3>
@@ -150,21 +150,21 @@ function HowItWorksSection() {
   )
 }
 
-function WhatYouGetSection() {
-  const sectionList = [
-    { title: 'The Basics', desc: 'Name, industry, and who you serve' },
-    { title: 'Your Story', desc: 'Why you started and what drives you' },
-    { title: 'What You Stand For', desc: 'The values behind every decision' },
-    { title: 'Brand Personality', desc: 'How your brand acts and feels' },
-    { title: 'Colors', desc: 'Your palette and when to use each color' },
-    { title: 'Logo', desc: 'Usage rules and what to avoid' },
-    { title: 'Typography', desc: 'Fonts that match your voice' },
-    { title: 'Messaging', desc: 'Tagline, elevator pitch, key messages' },
-    { title: 'Application', desc: 'Real-world usage examples' },
-    { title: 'Social Media', desc: 'Voice and style for each platform' },
-    { title: 'Photography', desc: 'The visual feel of your brand' },
-  ]
+const GUIDE_SECTIONS = [
+  { title: 'The Basics', desc: 'Name, industry, and who you serve' },
+  { title: 'Your Story', desc: 'Why you started and what drives you' },
+  { title: 'What You Stand For', desc: 'The values behind every decision' },
+  { title: 'Brand Personality', desc: 'How your brand acts and feels' },
+  { title: 'Colors', desc: 'Your palette and when to use each color' },
+  { title: 'Logo', desc: 'Usage rules and what to avoid' },
+  { title: 'Typography', desc: 'Fonts that match your voice' },
+  { title: 'Messaging', desc: 'Tagline, elevator pitch, key messages' },
+  { title: 'How It All Comes Together', desc: 'Real-world applications' },
+  { title: 'Social Media', desc: 'Voice and style for each platform' },
+  { title: 'Photography', desc: 'The visual feel of your brand' },
+]
 
+function WhatYouGetSection() {
   return (
     <section className="bg-brand-bg-warm px-6 py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
@@ -200,8 +200,8 @@ function WhatYouGetSection() {
         </div>
 
         {/* Section grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sectionList.map((s, i) => (
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {GUIDE_SECTIONS.map((s, i) => (
             <div key={i} className="flex items-start gap-3">
               <span className="text-brand-accent-sage mt-0.5 shrink-0">&#10003;</span>
               <div>
@@ -285,7 +285,7 @@ export function PathSelection() {
   }, [slug, loadSessions])
 
   const handleSetName = async () => {
-    const trimmed = nameInput.trim().toLowerCase().replace(/\s+/g, '-')
+    const trimmed = nameInput.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
     if (!trimmed || !pendingPath) return
     setUserSlug(trimmed)
     setSlug(trimmed)
@@ -338,10 +338,10 @@ export function PathSelection() {
       />
 
       {pendingPath && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPendingPath(null)}>
-          <div className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full space-y-6" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPendingPath(null)} onKeyDown={e => { if (e.key === 'Escape') setPendingPath(null) }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="name-modal-title" className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full space-y-6" onClick={e => e.stopPropagation()}>
             <div className="text-center">
-              <h2 className="font-heading text-2xl font-bold text-brand-text mb-2">What's your name?</h2>
+              <h2 id="name-modal-title" className="font-heading text-2xl font-bold text-brand-text mb-2">What's your name?</h2>
               <p className="text-brand-text-muted text-[15px]">This helps us save your progress.</p>
             </div>
             <input
