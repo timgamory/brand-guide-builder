@@ -4,6 +4,7 @@ import { createSession, getSession, updateSession, listSessions, deleteSession }
 import { getUserSlug } from '../services/userSlug'
 import { SECTIONS } from '../data/sections'
 import { generateMarkdown } from '../services/documentGenerator'
+import { track } from '../services/analytics'
 
 type BrandGuideState = {
   session: Session | null
@@ -35,6 +36,7 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const userSlug = getUserSlug() ?? undefined
     const session = await createSession(path, userSlug)
     set({ session, isLoading: false })
+    track('session.created', { path, userSlug: userSlug ?? null }, session.id)
   },
 
   loadSession: async (id) => {
@@ -131,6 +133,7 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const generatedDocument = generateMarkdown(updatedSession)
     await updateSession(session.id, { sections, generatedDocument })
     set({ session: { ...updatedSession, generatedDocument, updatedAt: new Date().toISOString() } })
+    track('section.skipped', { sectionId })
     await get().nextSection()
   },
 
@@ -140,6 +143,8 @@ export const useBrandGuideStore = create<BrandGuideState>((set, get) => ({
     const reviewToken = crypto.randomUUID()
     await updateSession(session.id, { reviewToken })
     set({ session: { ...session, reviewToken, updatedAt: new Date().toISOString() } })
+    const approvedCount = Object.values(session.sections).filter(s => s.status === 'approved').length
+    track('review.submitted', { sectionsApproved: approvedCount })
     return reviewToken
   },
 

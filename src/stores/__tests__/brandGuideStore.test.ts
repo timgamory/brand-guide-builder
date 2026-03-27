@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
+vi.mock('../../services/analytics', () => ({
+  track: vi.fn(),
+}))
+
 // Mock storage before importing store
 vi.mock('../../services/storage', () => {
   let sessions: Record<string, unknown> = {}
