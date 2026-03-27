@@ -4,6 +4,14 @@ vi.mock('../../services/analytics', () => ({
   track: vi.fn(),
 }))
 
+vi.mock('../../services/supabase', () => ({
+  supabase: {
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user-id' } } }),
+    },
+  },
+}))
+
 // Mock storage before importing store
 vi.mock('../../services/storage', () => {
   let sessions: Record<string, unknown> = {}
