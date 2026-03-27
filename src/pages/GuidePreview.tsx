@@ -5,6 +5,7 @@ import { useReflectionStore } from '../stores/reflectionStore'
 import { SECTIONS } from '../data/sections'
 import { downloadMarkdown, downloadDocx, downloadReflectionMarkdown } from '../services/documentGenerator'
 import { checkConsistency, type ConsistencyResult } from '../services/consistencyCheck'
+import { track } from '../services/analytics'
 
 const SECTION_TITLES: Record<string, string> = {
   basics: 'Introduction',
@@ -93,13 +94,21 @@ export function GuidePreview() {
               </button>
             )}
             <button
-              onClick={() => downloadMarkdown(session)}
+              onClick={() => {
+                downloadMarkdown(session)
+                const sectionsSkipped = SECTIONS.filter(s => session.sections[s.id]?.status === 'skipped').length
+                track('document.downloaded', { format: 'md', sectionsApproved: approvedSections.length, sectionsSkipped })
+              }}
               className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text text-sm font-medium hover:bg-brand-bg transition-colors"
             >
               Download .md
             </button>
             <button
-              onClick={() => downloadDocx(session)}
+              onClick={() => {
+                downloadDocx(session)
+                const sectionsSkipped = SECTIONS.filter(s => session.sections[s.id]?.status === 'skipped').length
+                track('document.downloaded', { format: 'docx', sectionsApproved: approvedSections.length, sectionsSkipped })
+              }}
               className="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-semibold hover:bg-brand-text-secondary transition-colors"
             >
               Download .docx

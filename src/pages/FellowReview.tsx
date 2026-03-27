@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useReviewStore } from '../stores/reviewStore'
 import { getSessionByReviewToken } from '../services/storage'
 import { SECTIONS } from '../data/sections'
+import { track } from '../services/analytics'
 import type { ReviewStatus, Session } from '../types'
 
 function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
@@ -120,7 +121,10 @@ export function FellowReview() {
               draft={draft}
               reviewStatus={reviewState.status}
               notes={reviewState.notes}
-              onAction={(status, notes) => setReviewStatus(section.id, status, notes)}
+              onAction={(status, notes) => {
+                setReviewStatus(section.id, status, notes)
+                track('review.completed', { sectionId: section.id, status, hasNotes: !!notes }, session.id)
+              }}
             />
           )
         })}
