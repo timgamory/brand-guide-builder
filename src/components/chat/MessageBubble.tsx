@@ -28,7 +28,7 @@ export function MessageBubble({ role, content, isStreaming }: {
   return (
     <div className={cn('flex mb-4', isAssistant ? 'justify-start' : 'justify-end')}>
       <div className={cn(
-        'max-w-[80%] rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed',
+        'max-w-[90%] md:max-w-[80%] rounded-2xl px-3.5 py-3 md:px-5 md:py-3.5 text-[15px] leading-relaxed',
         isAssistant
           ? 'bg-white border border-brand-border text-brand-text-secondary'
           : 'bg-brand-primary text-white'

@@ -53,7 +53,7 @@ export function PresentationView() {
   const title = SECTION_TITLES[currentSection.id] || currentSection.title
 
   return (
-    <div className="fixed inset-0 bg-brand-primary flex flex-col items-center justify-center p-8 font-body z-50">
+    <div className="fixed inset-0 bg-brand-primary flex flex-col items-center justify-center p-4 md:p-8 font-body z-50">
       <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white/50 text-sm">
         Section {currentIndex + 1} of {approvedSections.length}
       </div>
@@ -62,7 +62,7 @@ export function PresentationView() {
           Press Esc to exit
         </button>
       </div>
-      <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[70vh] overflow-y-auto p-10">
+      <div className="bg-white rounded-2xl shadow-xl max-w-full md:max-w-2xl w-full max-h-[70vh] overflow-y-auto p-6 md:p-10">
         <h2 className="font-heading text-2xl font-bold text-brand-text mb-4 pb-3 border-b border-brand-border">
           {title}
         </h2>

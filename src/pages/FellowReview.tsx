@@ -24,7 +24,7 @@ function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
   }[reviewStatus]
 
   return (
-    <div className="bg-white rounded-2xl border border-brand-border p-6">
+    <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-heading text-lg font-semibold text-brand-text">{title}</h3>
         <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${statusBadge.color}`}>{statusBadge.label}</span>
@@ -109,7 +109,7 @@ export function FellowReview() {
           {reviewedCount} of {approvedSections.length} reviewed · {approvedCount} approved
         </p>
       </div>
-      <div className="max-w-3xl mx-auto p-6 space-y-6">
+      <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
         {approvedSections.map(section => {
           const draft = session.sections[section.id]?.approvedDraft
           if (!draft) return null

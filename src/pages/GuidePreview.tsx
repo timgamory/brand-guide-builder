@@ -73,12 +73,12 @@ export function GuidePreview() {
 
   return (
     <div className="min-h-screen bg-brand-bg font-body">
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="max-w-3xl mx-auto px-4 md:px-6 py-10">
         <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <h1 className="font-heading text-2xl font-semibold text-brand-text">
             {session.brandData.orgName || 'Your'} Brand Guide
           </h1>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => navigate(`/wizard/${session.currentSection}`)}
               className="px-5 py-2.5 rounded-xl border border-brand-border-dark bg-white text-brand-text text-sm font-medium hover:bg-brand-bg transition-colors"
@@ -192,7 +192,7 @@ export function GuidePreview() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-10 space-y-10">
+        <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-6 md:p-10 space-y-10">
           {approvedSections.length === 0 ? (
             <p className="text-brand-text-muted text-center py-12">No sections completed yet. Complete sections in the wizard to see your brand guide here.</p>
           ) : (

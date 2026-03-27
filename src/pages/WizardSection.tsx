@@ -219,9 +219,9 @@ export function WizardSection() {
   return (
     <div className="h-full flex flex-col">
       {/* Section header */}
-      <div className="px-6 pt-6 pb-4 border-b border-brand-border">
+      <div className="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4 border-b border-brand-border">
         <div className="flex items-center gap-3">
-          <h2 className="font-heading text-2xl font-semibold text-brand-text">{section.title}</h2>
+          <h2 className="font-heading text-xl md:text-2xl font-semibold text-brand-text">{section.title}</h2>
           {section.optional && (
             <span className="text-[11px] font-semibold text-brand-text-faint uppercase tracking-wider bg-brand-bg-warm px-2.5 py-0.5 rounded-md">Optional</span>
           )}
@@ -239,7 +239,7 @@ export function WizardSection() {
 
       {/* API error banner */}
       {apiError && (
-        <div className="mx-6 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+        <div className="mx-4 md:mx-6 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
           AI assistant is temporarily unavailable. You can continue filling in fields manually.
           <button
             onClick={() => { setApiError(false); setMode(isIntern ? 'synthesis' : 'interview') }}
@@ -254,11 +254,11 @@ export function WizardSection() {
       <div className="flex-1 overflow-hidden">
         {session.sections[sectionId ?? '']?.status === 'approved' && mode !== 'review' ? (
           <div className="overflow-y-auto h-full">
-            <div className="max-w-2xl mx-auto p-6 space-y-6">
+            <div className="max-w-full md:max-w-2xl mx-auto p-4 md:p-6 space-y-6">
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
                 <span>&#10003;</span> This section has been approved.
               </div>
-              <div className="bg-white rounded-2xl border border-brand-border p-6">
+              <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
                 <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Approved Draft</h3>
                 <div className="text-[15px] leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
                   {session.sections[sectionId ?? '']?.approvedDraft}
@@ -302,7 +302,7 @@ export function WizardSection() {
               disableApprove={isIntern && !reflectionText.trim()}
             />
             {isIntern && sectionId && (
-              <div className="max-w-2xl mx-auto px-6 pb-6">
+              <div className="max-w-full md:max-w-2xl mx-auto px-4 md:px-6 pb-6">
                 <ReflectionPrompt
                   sectionId={sectionId}
                   value={reflectionText}

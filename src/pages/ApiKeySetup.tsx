@@ -28,7 +28,7 @@ export function ApiKeySetup() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg font-body flex items-center justify-center p-8">
+    <div className="min-h-screen bg-brand-bg font-body flex items-center justify-center p-4 md:p-8">
       <div className="max-w-md w-full">
         <h1 className="font-heading text-2xl font-semibold text-brand-text mb-2">Connect to Claude</h1>
         <p className="text-brand-text-muted text-[15px] leading-relaxed mb-6">

@@ -20,7 +20,7 @@ export function ReflectionPrompt({ sectionId, value, onChange }: {
   const prompt = REFLECTION_PROMPTS[sectionId] ?? 'What did you learn from working on this section?'
 
   return (
-    <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-6">
+    <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-4 md:p-6">
       <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Your Reflection</h3>
       <p className="text-[15px] text-brand-text-secondary mb-4 leading-relaxed">{prompt}</p>
       <textarea

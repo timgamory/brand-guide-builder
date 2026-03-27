@@ -16,11 +16,11 @@ export function TaskCard({ task, onToggle, onNotesChange }: {
   const config = TYPE_CONFIG[task.type]
 
   return (
-    <div className={`bg-white rounded-xl border border-brand-border p-5 ${task.completed ? 'opacity-75' : ''}`}>
+    <div className={`bg-white rounded-xl border border-brand-border p-4 md:p-5 ${task.completed ? 'opacity-75' : ''}`}>
       <div className="flex items-start gap-3">
         <button
           onClick={onToggle}
-          className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+          className={`mt-0.5 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
             task.completed ? 'bg-brand-accent-sage border-brand-accent-sage text-white' : 'border-brand-border-dark hover:border-brand-primary'
           }`}
         >

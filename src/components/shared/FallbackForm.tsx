@@ -6,7 +6,7 @@ export function FallbackForm({ fields, data, onChange }: {
   onChange: (key: string, value: string) => void
 }) {
   return (
-    <div className="max-w-[620px] mx-auto p-6 space-y-7">
+    <div className="max-w-[620px] mx-auto p-4 md:p-6 space-y-7">
       {fields.map(field => (
         <div key={field.key}>
           <label className="block font-body text-[15px] font-semibold text-brand-text mb-1.5 leading-snug">

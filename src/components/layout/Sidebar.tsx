@@ -17,7 +17,7 @@ function StatusIcon({ status }: { status: SectionStatus }) {
   return <span className="text-brand-text-faint text-xs">&#9675;</span>
 }
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const session = useBrandGuideStore(s => s.session)
   const navigateToSection = useBrandGuideStore(s => s.navigateToSection)
   const navigate = useNavigate()
@@ -28,10 +28,11 @@ export function Sidebar() {
   const handleClick = async (id: string) => {
     await navigateToSection(id)
     navigate(`/wizard/${id}`)
+    onNavigate?.()
   }
 
   return (
-    <nav className="w-[220px] shrink-0 bg-brand-bg-warm border-r border-brand-border py-6 overflow-y-auto">
+    <nav className="w-[260px] md:w-[220px] shrink-0 bg-brand-bg-warm border-r border-brand-border py-6 overflow-y-auto">
       {SECTIONS.map((section) => {
         const isActive = section.id === currentSectionId
         const sectionState = session?.sections[section.id]
@@ -42,7 +43,7 @@ export function Sidebar() {
             key={section.id}
             onClick={() => handleClick(section.id)}
             className={cn(
-              'block w-full text-left px-5 py-2.5 border-l-[3px] transition-all font-body text-[13px] cursor-pointer',
+              'block w-full text-left px-5 py-3 md:py-2.5 min-h-[44px] md:min-h-0 border-l-[3px] transition-all font-body text-sm md:text-[13px] cursor-pointer',
               isActive
                 ? 'bg-white border-brand-primary font-semibold text-brand-text'
                 : 'border-transparent text-brand-text-muted hover:text-brand-text hover:bg-white/50'

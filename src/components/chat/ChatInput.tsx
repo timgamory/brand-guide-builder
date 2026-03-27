@@ -15,6 +15,17 @@ export function ChatInput({ onSend, disabled, quickChips }: {
     }
   }, [text])
 
+  // Scroll input into view when virtual keyboard opens (iOS)
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    const handleResize = () => {
+      textareaRef.current?.scrollIntoView({ block: 'nearest' })
+    }
+    viewport.addEventListener('resize', handleResize)
+    return () => viewport.removeEventListener('resize', handleResize)
+  }, [])
+
   const handleSubmit = () => {
     const trimmed = text.trim()
     if (!trimmed || disabled) return
@@ -30,7 +41,7 @@ export function ChatInput({ onSend, disabled, quickChips }: {
   }
 
   return (
-    <div className="border-t border-brand-border bg-white p-4">
+    <div className="border-t border-brand-border bg-white p-3 md:p-4">
       {quickChips && quickChips.length > 0 && (
         <div className="flex gap-2 mb-3 flex-wrap">
           {quickChips.map((chip, i) => (
@@ -38,7 +49,7 @@ export function ChatInput({ onSend, disabled, quickChips }: {
               key={i}
               onClick={() => onSend(chip)}
               disabled={disabled}
-              className="text-sm px-3 py-1.5 rounded-full border border-brand-border-dark text-brand-text-muted hover:bg-brand-bg-warm hover:text-brand-text transition-colors disabled:opacity-40"
+              className="text-sm px-3 py-2.5 md:py-1.5 rounded-full border border-brand-border-dark text-brand-text-muted hover:bg-brand-bg-warm hover:text-brand-text transition-colors disabled:opacity-40"
             >
               {chip}
             </button>

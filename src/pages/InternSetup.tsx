@@ -19,7 +19,7 @@ export function InternSetup() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg font-body flex items-center justify-center p-8">
+    <div className="min-h-screen bg-brand-bg font-body flex items-center justify-center p-4 md:p-8">
       <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-8 max-w-md w-full space-y-6">
         <div>
           <h1 className="font-heading text-2xl font-bold text-brand-text">Getting Started</h1>

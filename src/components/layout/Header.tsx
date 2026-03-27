@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
+import { Menu } from 'lucide-react'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
 
-export function Header() {
+export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate()
   const session = useBrandGuideStore(s => s.session)
 
@@ -10,20 +11,29 @@ export function Header() {
     : 'Your Brand'
 
   return (
-    <header className="bg-brand-primary px-8 py-5 flex items-center justify-between">
-      <div>
-        <h1
-          onClick={() => navigate('/')}
-          className="font-heading text-xl font-semibold text-white cursor-pointer hover:text-white/80 transition-colors"
+    <header className="bg-brand-primary px-4 py-3.5 md:px-8 md:py-5 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onMenuClick}
+          className="md:hidden p-2 -ml-2 text-white"
+          aria-label="Open navigation"
         >
-          Brand Guide Builder
-        </h1>
-        {session && (
-          <p className="text-brand-text-faint text-sm mt-0.5">{pathLabel}</p>
-        )}
+          <Menu size={24} />
+        </button>
+        <div>
+          <h1
+            onClick={() => navigate('/')}
+            className="font-heading text-xl font-semibold text-white cursor-pointer hover:text-white/80 transition-colors"
+          >
+            Brand Guide Builder
+          </h1>
+          {session && (
+            <p className="text-brand-text-faint text-sm mt-0.5">{pathLabel}</p>
+          )}
+        </div>
       </div>
       {session?.brandData.orgName && (
-        <span className="font-heading text-brand-accent-gold text-[15px] font-medium">
+        <span className="hidden sm:inline font-heading text-brand-accent-gold text-[15px] font-medium">
           {session.brandData.orgName}
         </span>
       )}

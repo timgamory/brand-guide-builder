@@ -12,9 +12,9 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
   const [showRevise, setShowRevise] = useState(false)
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 p-6">
+    <div className="max-w-full md:max-w-2xl mx-auto space-y-6 p-4 md:p-6">
       {/* Draft */}
-      <div className="bg-white rounded-2xl border border-brand-border p-6">
+      <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
         <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Draft</h3>
         <textarea
           value={editedDraft}
@@ -25,7 +25,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
 
       {/* Suggestions */}
       {review.suggestions.length > 0 && (
-        <div className="bg-white rounded-2xl border border-brand-border p-6">
+        <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
           <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Suggestions</h3>
           <ul className="space-y-2">
             {review.suggestions.map((s, i) => (
@@ -40,7 +40,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
 
       {/* Alternatives */}
       {review.alternatives.length > 0 && (
-        <div className="bg-white rounded-2xl border border-brand-border p-6">
+        <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
           <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Creative Alternatives</h3>
           <div className="space-y-3">
             {review.alternatives.map((a, i) => (
@@ -55,7 +55,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
 
       {/* Teaching Moment */}
       {review.teachingMoment && (
-        <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-6">
+        <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-4 md:p-6">
           <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Why This Matters</h3>
           <p className="text-[15px] text-brand-text-secondary leading-relaxed">{review.teachingMoment}</p>
         </div>
