@@ -3,9 +3,11 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
+import { useAuth } from '../../hooks/useAuth'
 import { cn } from '../../lib/utils'
 
 export function WizardShell() {
+  const { user, isLoading: authLoading } = useAuth()
   const session = useBrandGuideStore(s => s.session)
   const isLoading = useBrandGuideStore(s => s.isLoading)
   const loadMostRecentSession = useBrandGuideStore(s => s.loadMostRecentSession)
@@ -18,6 +20,12 @@ export function WizardShell() {
   }, [loadMostRecentSession])
 
   useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/')
+    }
+  }, [authLoading, user, navigate])
+
+  useEffect(() => {
     if (!isLoading && !session) {
       navigate('/')
     }
@@ -28,7 +36,7 @@ export function WizardShell() {
     setIsDrawerOpen(false)
   }, [location.pathname])
 
-  if (isLoading || !session) return null
+  if (authLoading || isLoading || !session) return null
 
   return (
     <div className="h-dvh bg-brand-bg font-body flex flex-col overflow-hidden">
