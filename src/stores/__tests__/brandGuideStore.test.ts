@@ -31,6 +31,12 @@ vi.mock('../../services/storage', () => {
   }
 })
 
+vi.mock('../../services/documentGenerator', () => ({
+  generateMarkdown: vi.fn((session: { brandData: { orgName?: string } }) => {
+    return `# ${session.brandData.orgName || 'Brand'} Guide`
+  }),
+}))
+
 import { useBrandGuideStore } from '../brandGuideStore'
 import * as storage from '../../services/storage'
 
@@ -73,5 +79,21 @@ describe('brandGuideStore', () => {
     const state = useBrandGuideStore.getState()
     expect(state.session!.sections['story'].status).toBe('approved')
     expect(state.session!.sections['story'].approvedDraft).toBe('Polished story draft...')
+  })
+
+  it('regenerates document when approving a draft', async () => {
+    await useBrandGuideStore.getState().createNewSession('entrepreneur')
+    await useBrandGuideStore.getState().updateBrandData({ orgName: 'Acme' })
+    await useBrandGuideStore.getState().approveSectionDraft('basics', 'Acme is great.')
+    const state = useBrandGuideStore.getState()
+    expect(state.session!.generatedDocument).toBe('# Acme Guide')
+  })
+
+  it('regenerates document when skipping a section', async () => {
+    await useBrandGuideStore.getState().createNewSession('entrepreneur')
+    await useBrandGuideStore.getState().updateBrandData({ orgName: 'Acme' })
+    await useBrandGuideStore.getState().skipSection('basics')
+    const state = useBrandGuideStore.getState()
+    expect(state.session!.generatedDocument).toBe('# Acme Guide')
   })
 })
