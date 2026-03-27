@@ -52,3 +52,19 @@ CREATE POLICY "allow_all_reflections" ON reflections FOR ALL USING (true) WITH C
 
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "allow_all_reviews" ON reviews FOR ALL USING (true) WITH CHECK (true);
+
+-- Analytics events table
+CREATE TABLE analytics_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID,
+  event_type TEXT NOT NULL,
+  payload JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_analytics_session ON analytics_events (session_id);
+CREATE INDEX idx_analytics_type_time ON analytics_events (event_type, created_at);
+CREATE INDEX idx_analytics_time ON analytics_events (created_at);
+
+ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "allow_all_analytics" ON analytics_events FOR ALL USING (true) WITH CHECK (true);
