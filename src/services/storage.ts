@@ -103,7 +103,7 @@ async function getSession(id: string): Promise<Session | undefined> {
     .from('sessions')
     .select('*')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (error || !data) return undefined
   return sessionFromRow(data)
@@ -141,7 +141,7 @@ async function getSessionByReviewToken(token: string): Promise<Session | undefin
     .from('sessions')
     .select('*')
     .eq('review_token', token)
-    .single()
+    .maybeSingle()
 
   if (error || !data) return undefined
   return sessionFromRow(data)
@@ -173,7 +173,7 @@ async function getReflections(sessionId: string): Promise<Reflections | undefine
     .from('reflections')
     .select('*')
     .eq('id', sessionId)
-    .single()
+    .maybeSingle()
 
   if (error || !data) return undefined
   return { id: data.id, entries: data.entries ?? [] }
@@ -199,7 +199,7 @@ async function getReview(sessionId: string): Promise<Review | undefined> {
     .from('reviews')
     .select('*')
     .eq('id', sessionId)
-    .single()
+    .maybeSingle()
 
   if (error || !data) return undefined
   return { id: data.id, sections: data.sections ?? {} }
@@ -229,7 +229,7 @@ async function getConversation(sessionId: string, sectionId: string): Promise<Co
     .from('conversations')
     .select('*')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (error || !data) return undefined
   return conversationFromRow(data)
