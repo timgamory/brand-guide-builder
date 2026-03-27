@@ -14,6 +14,7 @@ import { SectionReview } from '../components/review/SectionReview'
 import { FallbackForm } from '../components/shared/FallbackForm'
 import { TaskList } from '../components/research/TaskList'
 import { ReflectionPrompt } from '../components/reflection/ReflectionPrompt'
+import { track } from '../services/analytics'
 import type { Message, SectionReviewResponse, WizardMode } from '../types'
 
 export function WizardSection() {
@@ -42,6 +43,7 @@ export function WizardSection() {
     loadConversation(session.id, sectionId)
     setReview(null)
     setApiError(false)
+    track('section.started', { sectionId })
 
     if (session.path === 'intern') {
       setMode('research')
@@ -91,6 +93,7 @@ export function WizardSection() {
 
     const userMsg: Message = { role: 'user', content: text }
     await addMessage(userMsg)
+    track('message.sent', { sectionId, role: 'user', length: text.length })
     await updateSectionStatus(sectionId, 'in_progress')
 
     setStreaming(true)
@@ -112,6 +115,7 @@ export function WizardSection() {
         try {
           summary = await generateSummary(allMessages, summary)
           summarizedAtCount = allMessages.length
+          track('summary.triggered', { sectionId, messageCount: allMessages.length })
           await saveConversation(session.id, sectionId, {
             messages: useConversationStore.getState().messages,
             researchTasks: useConversationStore.getState().researchTasks,
@@ -133,10 +137,12 @@ export function WizardSection() {
       const parsed = parseSectionReview(response)
       if (parsed) {
         await addMessage({ role: 'assistant', content: "Here's my draft for this section. Take a look and let me know what you think." })
+        track('message.sent', { sectionId, role: 'assistant', length: "Here's my draft for this section. Take a look and let me know what you think.".length })
         setReview(parsed)
         setMode('review')
       } else {
         await addMessage({ role: 'assistant', content: response })
+        track('message.sent', { sectionId, role: 'assistant', length: response.length })
       }
 
       setApiError(false)
@@ -156,6 +162,8 @@ export function WizardSection() {
     if (isIntern && reflectionText.trim()) {
       await useReflectionStore.getState().setReflection(sectionId, reflectionText.trim())
     }
+    const messageCount = useConversationStore.getState().messages.length
+    track('section.approved', { sectionId, messageCount, draftLength: draft.length })
     await approveSectionDraft(sectionId, draft)
     const store = useBrandGuideStore.getState()
     await store.nextSection()
