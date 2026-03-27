@@ -30,7 +30,7 @@
 
 | Event | Payload | Answers |
 |---|---|---|
-| `session.created` | `{ path, userSlug }` | How many start, which path |
+| `session.created` | `{ path }` | How many start, which path (join to sessions for userSlug) |
 | `section.started` | `{ sectionId }` | Which sections get attempted |
 | `section.approved` | `{ sectionId, messageCount, draftLength, revisionNumber }` | Completion + effort to get there |
 | `section.skipped` | `{ sectionId }` | What people skip |
@@ -97,8 +97,8 @@ track(eventType: string, payload: object, sessionId?: string)
 
 - Writes `api.request`, `api.error`, `api.rate_limited` directly to Supabase
 - Uses `SUPABASE_SERVICE_ROLE_KEY` (new env var) to bypass RLS
-- Client passes `X-Session-Id` header so proxy can associate events with sessions
-- Token counts from Anthropic API response `usage` object
+- Client passes `X-Session-Id` and `X-Section-Id` headers so proxy can associate events with sessions and sections
+- Token counts not yet available (streaming mode — `usage` object comes in final SSE event which the proxy doesn't parse; tracked as future improvement)
 
 ## Example Queries
 

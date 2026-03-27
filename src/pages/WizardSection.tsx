@@ -138,8 +138,9 @@ export function WizardSection() {
       // Check if response is a section review (JSON)
       const parsed = parseSectionReview(response)
       if (parsed) {
-        await addMessage({ role: 'assistant', content: "Here's my draft for this section. Take a look and let me know what you think." })
-        track('message.sent', { sectionId, role: 'assistant', length: "Here's my draft for this section. Take a look and let me know what you think.".length })
+        const draftReadyMsg = "Here's my draft for this section. Take a look and let me know what you think."
+        await addMessage({ role: 'assistant', content: draftReadyMsg })
+        track('message.sent', { sectionId, role: 'assistant', length: draftReadyMsg.length })
         setReview(parsed)
         setMode('review')
       } else {
