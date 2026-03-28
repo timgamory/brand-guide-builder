@@ -19,7 +19,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
         <textarea
           value={editedDraft}
           onChange={e => setEditedDraft(e.target.value)}
-          className="w-full min-h-[200px] text-[15px] leading-relaxed text-brand-text-secondary bg-brand-bg rounded-xl p-4 border border-brand-border outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body"
+          className="w-full min-h-[200px] text-body leading-relaxed text-brand-text-secondary bg-brand-bg rounded-xl p-4 border border-brand-border outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body"
         />
       </div>
 
@@ -29,7 +29,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
           <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Suggestions</h3>
           <ul className="space-y-2">
             {review.suggestions.map((s, i) => (
-              <li key={i} className="text-[15px] text-brand-text-secondary leading-relaxed flex items-start gap-2">
+              <li key={i} className="text-body text-brand-text-secondary leading-relaxed flex items-start gap-2">
                 <span className="text-brand-accent-coral mt-0.5 shrink-0">&#9679;</span>
                 {s}
               </li>
@@ -45,7 +45,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
           <div className="space-y-3">
             {review.alternatives.map((a, i) => (
               <div key={i} className="bg-brand-bg rounded-xl p-4">
-                <p className="text-[15px] font-medium text-brand-text">{a.option}</p>
+                <p className="text-body font-medium text-brand-text">{a.option}</p>
                 <p className="text-sm text-brand-text-muted mt-1">{a.rationale}</p>
               </div>
             ))}
@@ -57,7 +57,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
       {review.teachingMoment && (
         <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-4 md:p-6">
           <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Why This Matters</h3>
-          <p className="text-[15px] text-brand-text-secondary leading-relaxed">{review.teachingMoment}</p>
+          <p className="text-body text-brand-text-secondary leading-relaxed">{review.teachingMoment}</p>
         </div>
       )}
 
@@ -66,7 +66,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
         <button
           onClick={() => onApprove(editedDraft)}
           disabled={disableApprove}
-          className="px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-body hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Approve &amp; Continue
         </button>
@@ -95,7 +95,7 @@ export function SectionReview({ review, onApprove, onRevise, disableApprove = fa
         ) : (
           <button
             onClick={() => setShowRevise(true)}
-            className="px-6 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text font-medium text-[15px] hover:bg-brand-bg transition-colors"
+            className="px-6 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text font-medium text-body hover:bg-brand-bg transition-colors"
           >
             Ask AI to Revise
           </button>

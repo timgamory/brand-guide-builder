@@ -130,7 +130,7 @@ export function Dashboard() {
 
         {/* Empty state */}
         {sessions.length === 0 && !showPathChoice && !showInternForm && (
-          <p className="text-brand-text-muted text-center text-[15px] mb-8">
+          <p className="text-brand-text-muted text-center text-body-sm mb-8">
             You don't have any brand guides yet.
           </p>
         )}
@@ -140,7 +140,7 @@ export function Dashboard() {
           <div className="text-center">
             <button
               onClick={() => setShowPathChoice(true)}
-              className="bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors"
+              className="bg-brand-primary text-white font-semibold text-body-sm px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors"
             >
               Start New Guide
             </button>
@@ -157,7 +157,7 @@ export function Dashboard() {
                 className="bg-white rounded-2xl p-8 border border-brand-border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left max-w-sm w-full cursor-pointer"
               >
                 <h3 className="font-heading text-2xl font-semibold text-brand-text mb-2">I'm building my own brand guide</h3>
-                <p className="text-brand-text-secondary text-[15px] leading-relaxed">
+                <p className="text-brand-text-secondary text-body-sm leading-relaxed">
                   Work directly with an AI brand strategist who'll draw out what you already know and turn it into polished brand language.
                 </p>
               </button>
@@ -166,7 +166,7 @@ export function Dashboard() {
                 className="bg-white rounded-2xl p-8 border border-brand-border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-left max-w-sm w-full cursor-pointer"
               >
                 <h3 className="font-heading text-2xl font-semibold text-brand-text mb-2">I'm building for someone else</h3>
-                <p className="text-brand-text-secondary text-[15px] leading-relaxed">
+                <p className="text-brand-text-secondary text-body-sm leading-relaxed">
                   Get guided through a research process with structured assignments, AI coaching, and a fellow review flow.
                 </p>
               </button>
@@ -186,7 +186,7 @@ export function Dashboard() {
             <div className="bg-white rounded-2xl border border-brand-border shadow-sm p-8 max-w-md w-full space-y-6">
               <div>
                 <h2 className="font-heading text-2xl font-bold text-brand-text">Getting Started</h2>
-                <p className="text-brand-text-muted text-[15px] mt-1">
+                <p className="text-brand-text-muted text-body-sm mt-1">
                   You'll be building a brand guide for someone else. Let's get the basics.
                 </p>
               </div>
@@ -197,7 +197,7 @@ export function Dashboard() {
                     value={internName}
                     onChange={e => setInternName(e.target.value)}
                     placeholder="e.g. Jordan"
-                    className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-body-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
                   />
                 </div>
                 <div>
@@ -206,21 +206,21 @@ export function Dashboard() {
                     value={fellowName}
                     onChange={e => setFellowName(e.target.value)}
                     placeholder="e.g. Maria"
-                    className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-body-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
                   />
                 </div>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => { setShowInternForm(false); setShowPathChoice(true) }}
-                  className="px-6 py-3 rounded-xl border border-brand-border text-brand-text-secondary font-medium text-[15px] hover:bg-brand-bg transition-colors"
+                  className="px-6 py-3 rounded-xl border border-brand-border text-brand-text-secondary font-medium text-body-sm hover:bg-brand-bg transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleInternSubmit}
                   disabled={!internName.trim() || !fellowName.trim()}
-                  className="flex-1 px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-body-sm hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Let's go
                 </button>

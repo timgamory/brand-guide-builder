@@ -29,7 +29,7 @@ function ReviewSection({ title, draft, reviewStatus, notes, onAction }: {
         <h3 className="font-heading text-lg font-semibold text-brand-text">{title}</h3>
         <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${statusBadge.color}`}>{statusBadge.label}</span>
       </div>
-      <div className="text-[15px] text-brand-text-secondary leading-relaxed whitespace-pre-wrap mb-4">
+      <div className="text-body-sm text-brand-text-secondary leading-relaxed whitespace-pre-wrap mb-4">
         {draft}
       </div>
       {showNotes && (

@@ -32,7 +32,7 @@ export function TaskCard({ task, onToggle, onNotesChange }: {
               {config.icon} {config.label}
             </span>
           </div>
-          <p className={`text-[15px] text-brand-text leading-relaxed ${task.completed ? 'line-through text-brand-text-muted' : ''}`}>
+          <p className={`text-body text-brand-text leading-relaxed ${task.completed ? 'line-through text-brand-text-muted' : ''}`}>
             {task.description}
           </p>
           <textarea

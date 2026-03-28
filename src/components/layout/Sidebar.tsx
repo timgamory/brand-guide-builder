@@ -40,7 +40,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   }
 
   return (
-    <nav className="w-[260px] md:w-[220px] shrink-0 bg-brand-bg-warm border-r border-brand-border py-6 overflow-y-auto flex flex-col">
+    <nav className="w-[260px] md:w-[220px] shrink-0 bg-brand-bg-warm border-r border-brand-border py-6 overflow-y-auto flex flex-col h-full">
       {SECTIONS.map((section) => {
         const isActive = section.id === currentSectionId
         const sectionState = session?.sections[section.id]
@@ -51,7 +51,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             key={section.id}
             onClick={() => handleClick(section.id)}
             className={cn(
-              'block w-full text-left px-5 py-3 md:py-2.5 min-h-[44px] md:min-h-0 border-l-[3px] transition-all font-body text-sm md:text-[13px] cursor-pointer',
+              'block w-full text-left px-5 py-3 md:py-2.5 min-h-[44px] md:min-h-0 border-l-[3px] transition-all font-body text-sm md:text-body-sm cursor-pointer',
               isActive
                 ? 'bg-white border-brand-primary font-semibold text-brand-text'
                 : 'border-transparent text-brand-text-muted hover:text-brand-text hover:bg-white/50'
@@ -61,7 +61,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
               <StatusIcon status={status} />
               {section.title}
               {section.optional && (
-                <span className="text-[9px] text-brand-text-faint font-normal uppercase tracking-wider">opt</span>
+                <span className="text-micro text-brand-text-faint font-normal uppercase tracking-wider">opt</span>
               )}
             </span>
           </button>
@@ -69,7 +69,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       })}
 
       {session?.path === 'intern' && session.internMeta?.fellowName && (
-        <p className="px-5 mt-4 text-[11px] text-brand-text-faint">
+        <p className="px-5 mt-4 text-fine text-brand-text-faint">
           Building for {session.internMeta.fellowName}
         </p>
       )}

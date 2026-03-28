@@ -9,7 +9,7 @@ export function FallbackForm({ fields, data, onChange }: {
     <div className="max-w-[620px] mx-auto p-4 md:p-6 space-y-7">
       {fields.map(field => (
         <div key={field.key}>
-          <label className="block font-body text-[15px] font-semibold text-brand-text mb-1.5 leading-snug">
+          <label className="block font-body text-body font-semibold text-brand-text mb-1.5 leading-snug">
             {field.label}
           </label>
           {field.help && (
@@ -21,13 +21,13 @@ export function FallbackForm({ fields, data, onChange }: {
               onChange={e => onChange(field.key, e.target.value)}
               placeholder={field.placeholder}
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body leading-relaxed"
+              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body leading-relaxed"
             />
           ) : field.type === 'select' ? (
             <select
               value={data[field.key] || ''}
               onChange={e => onChange(field.key, e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-body appearance-none cursor-pointer"
+              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-body appearance-none cursor-pointer"
             >
               <option value="">Choose one...</option>
               {field.options?.map(o => <option key={o} value={o}>{o}</option>)}
@@ -50,7 +50,7 @@ export function FallbackForm({ fields, data, onChange }: {
               value={data[field.key] || ''}
               onChange={e => onChange(field.key, e.target.value)}
               placeholder={field.placeholder}
-              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-body"
+              className="w-full px-4 py-3 rounded-xl border border-brand-border-dark bg-white text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all font-body"
             />
           )}
         </div>

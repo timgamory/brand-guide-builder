@@ -57,7 +57,7 @@ function HeroSection() {
         </p>
         <button
           onClick={handleCTA}
-          className="inline-block bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:outline-none"
+          className="inline-block bg-brand-primary text-white font-semibold text-body-sm px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:outline-none"
         >
           Get Started
         </button>
@@ -94,7 +94,7 @@ function WhySection() {
           {WHY_CARDS.map((c, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 border border-brand-border shadow-sm">
               <h3 className="font-heading text-lg font-semibold text-brand-text mb-2 leading-snug">{c.title}</h3>
-              <p className="text-brand-text-secondary text-[15px] leading-relaxed">{c.body}</p>
+              <p className="text-brand-text-secondary text-body-sm leading-relaxed">{c.body}</p>
             </div>
           ))}
         </div>
@@ -135,11 +135,11 @@ function HowItWorksSection() {
             <div key={s.num}>
               <span className="font-heading text-3xl font-bold text-brand-accent-coral">{s.num}</span>
               <h3 className="font-heading text-lg font-semibold text-brand-text mt-2 mb-2">{s.title}</h3>
-              <p className="text-brand-text-secondary text-[15px] leading-relaxed">{s.body}</p>
+              <p className="text-brand-text-secondary text-body-sm leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
-        <p className="text-brand-text-muted text-center mt-10 text-[15px]">
+        <p className="text-brand-text-muted text-center mt-10 text-body-sm">
           Most people finish in 2&ndash;3 sessions. No branding experience needed.
         </p>
       </div>
@@ -174,24 +174,24 @@ function WhatYouGetSection() {
         {/* Mockup card */}
         <div className="flex justify-center mb-14">
           <div className="bg-white rounded-2xl border border-brand-border shadow-lg p-8 max-w-sm w-full rotate-[-1deg]">
-            <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-brand-text-muted mb-1">Brand Guide</p>
+            <p className="text-fine font-semibold tracking-[0.2em] uppercase text-brand-text-muted mb-1">Brand Guide</p>
             <h3 className="font-heading text-2xl font-bold text-brand-text mb-5">Bright Path Consulting</h3>
 
             <div className="border-t border-brand-border pt-4 mb-4">
               <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Brand Story</p>
-              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+              <p className="text-brand-text-secondary text-xs leading-relaxed">
                 Founded in 2019, Bright Path helps small businesses find clarity in their next chapter.
               </p>
             </div>
             <div className="border-t border-brand-border pt-4 mb-4">
               <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Values</p>
-              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+              <p className="text-brand-text-secondary text-xs leading-relaxed">
                 Honesty, accessibility, and real talk over corporate jargon.
               </p>
             </div>
             <div className="border-t border-brand-border pt-4">
               <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-muted mb-1">Voice</p>
-              <p className="text-brand-text-secondary text-[13px] leading-relaxed">
+              <p className="text-brand-text-secondary text-xs leading-relaxed">
                 Warm but direct. Like a smart friend who happens to know branding.
               </p>
             </div>
@@ -204,7 +204,7 @@ function WhatYouGetSection() {
             <div key={i} className="flex items-start gap-3">
               <span className="text-brand-accent-sage mt-0.5 shrink-0" aria-hidden="true">&#10003;</span>
               <div>
-                <p className="font-semibold text-brand-text text-[15px]">{s.title}</p>
+                <p className="font-semibold text-brand-text text-body-sm">{s.title}</p>
                 <p className="text-brand-text-muted text-sm">{s.desc}</p>
               </div>
             </div>
@@ -242,7 +242,7 @@ function LoginForm() {
     return (
       <div className="text-center space-y-3">
         <h3 className="font-heading text-xl font-semibold text-brand-text">Check your email</h3>
-        <p className="text-brand-text-secondary text-[15px]">
+        <p className="text-brand-text-secondary text-body-sm">
           We sent a magic link to <strong>{email}</strong>. Click it to sign in.
         </p>
       </div>
@@ -253,7 +253,7 @@ function LoginForm() {
     <form onSubmit={handleSubmit} className="max-w-sm mx-auto space-y-4">
       <div className="text-center mb-2">
         <h3 className="font-heading text-xl font-semibold text-brand-text">Enter your email to get started</h3>
-        <p className="text-brand-text-muted text-[15px] mt-1">We'll send you a magic link — no password needed.</p>
+        <p className="text-brand-text-muted text-body-sm mt-1">We'll send you a magic link — no password needed.</p>
       </div>
       <input
         type="email"
@@ -261,13 +261,13 @@ function LoginForm() {
         onChange={e => setEmail(e.target.value)}
         placeholder="you@example.com"
         required
-        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
+        className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-body-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"
         disabled={sending || !email.trim()}
-        className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full px-6 py-3 rounded-xl bg-brand-primary text-white font-semibold text-body-sm hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {sending ? 'Sending...' : 'Send Magic Link'}
       </button>
@@ -293,7 +293,7 @@ function GetStartedSection() {
             </h2>
             <button
               onClick={() => navigate('/dashboard')}
-              className="inline-block bg-brand-primary text-white font-semibold text-[15px] px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:outline-none"
+              className="inline-block bg-brand-primary text-white font-semibold text-body-sm px-8 py-3.5 rounded-xl hover:bg-brand-text-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/30 focus-visible:outline-none"
             >
               Go to Dashboard
             </button>
