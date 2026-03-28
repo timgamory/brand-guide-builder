@@ -221,9 +221,16 @@ export function WizardSection() {
 
   const handleRefine = useCallback(async () => {
     if (!sectionId) return
+    const draft = session?.sections[sectionId]?.approvedDraft
     await updateSectionStatus(sectionId, 'in_progress')
     setMode(isIntern ? 'synthesis' : 'interview')
-  }, [sectionId, updateSectionStatus, isIntern])
+    if (draft) {
+      await addMessage({
+        role: 'assistant',
+        content: `Here's your current approved draft:\n\n${draft}\n\nWhat would you like to change?`
+      })
+    }
+  }, [sectionId, updateSectionStatus, isIntern, session, addMessage])
 
   const handleSkip = useCallback(async () => {
     if (!sectionId) return
