@@ -387,6 +387,7 @@ export function WizardSection() {
             showVoiceButton={voiceEnabled && mode !== 'review'}
             onVoiceStart={() => setVoiceActive(true)}
             onSaveExit={() => navigate('/dashboard')}
+            sectionTitle={section.title}
           />
         )}
       </div>
