@@ -147,3 +147,10 @@ export function getSection(id: string): Section | undefined {
 export function getSectionIndex(id: string): number {
   return SECTIONS.findIndex(s => s.id === id)
 }
+
+export function getNextSection(currentId: string): { id: string; title: string } | null {
+  const index = SECTIONS.findIndex(s => s.id === currentId)
+  if (index === -1 || index >= SECTIONS.length - 1) return null
+  const next = SECTIONS[index + 1]
+  return { id: next.id, title: next.title }
+}
