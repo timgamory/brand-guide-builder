@@ -14,6 +14,8 @@ import { SectionReview } from '../components/review/SectionReview'
 import { FallbackForm } from '../components/shared/FallbackForm'
 import { TaskList } from '../components/research/TaskList'
 import { ReflectionPrompt } from '../components/reflection/ReflectionPrompt'
+import { VoiceOverlay } from '../components/voice/VoiceOverlay'
+import { useVoiceSettings } from '../hooks/useVoiceSettings'
 import { track } from '../services/analytics'
 import type { Message, SectionReviewResponse, WizardMode } from '../types'
 
@@ -35,6 +37,9 @@ export function WizardSection() {
   const [apiError, setApiError] = useState(false)
   const [reflectionText, setReflectionText] = useState('')
   const [revisionCount, setRevisionCount] = useState(0)
+  const [voiceActive, setVoiceActive] = useState(false)
+  const { voiceEnabled } = useVoiceSettings()
+  const [isReviewDetected, setIsReviewDetected] = useState(false)
 
   const section = sectionId ? getSection(sectionId) : undefined
 
@@ -45,6 +50,8 @@ export function WizardSection() {
     setReview(null)
     setApiError(false)
     setRevisionCount(0)
+    setIsReviewDetected(false)
+    setVoiceActive(false)
     track('section.started', { sectionId })
 
     if (session.path === 'intern') {
@@ -143,6 +150,7 @@ export function WizardSection() {
         track('message.sent', { sectionId, role: 'assistant', length: draftReadyMsg.length })
         setReview(parsed)
         setMode('review')
+        setIsReviewDetected(true)
       } else {
         await addMessage({ role: 'assistant', content: response })
         track('message.sent', { sectionId, role: 'assistant', length: response.length })
@@ -158,6 +166,10 @@ export function WizardSection() {
       setMode('fallback')
     }
   }, [session, sectionId, messages, addMessage, setStreaming, updateSectionStatus, isIntern])
+
+  const handleEndVoiceSession = useCallback(async () => {
+    await handleSend('Please wrap up and generate a section review based on what we have discussed so far.')
+  }, [handleSend])
 
   const handleApprove = useCallback(async (draft: string) => {
     if (!sectionId) return
@@ -334,9 +346,21 @@ export function WizardSection() {
             streamingContent={streamingContent}
             onSend={handleSend}
             isStreaming={isStreaming}
+            showVoiceButton={voiceEnabled && mode !== 'review'}
+            onVoiceStart={() => setVoiceActive(true)}
           />
         )}
       </div>
+
+      {voiceActive && (
+        <VoiceOverlay
+          messages={messages}
+          onSend={handleSend}
+          isReviewDetected={isReviewDetected}
+          onClose={() => setVoiceActive(false)}
+          onEndSession={handleEndVoiceSession}
+        />
+      )}
     </div>
   )
 }
