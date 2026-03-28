@@ -279,14 +279,6 @@ export function WizardSection() {
         {session.sections[sectionId ?? '']?.status === 'approved' && mode !== 'review' ? (
           <div className="overflow-y-auto h-full">
             <div className="max-w-full md:max-w-2xl mx-auto p-4 md:p-6 space-y-6">
-              {/* Save & Exit link */}
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
-              >
-                &larr; Save &amp; Exit
-              </button>
-
               {/* Success banner */}
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
                 <span>&#10003;</span> This section has been approved.
@@ -352,14 +344,6 @@ export function WizardSection() {
           </div>
         ) : mode === 'review' && review ? (
           <div className="overflow-y-auto h-full">
-            <div className="max-w-full md:max-w-2xl mx-auto px-4 md:px-6 pt-4 md:pt-6">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
-              >
-                &larr; Save &amp; Exit
-              </button>
-            </div>
             <SectionReview
               review={review}
               onApprove={handleApprove}
@@ -393,7 +377,6 @@ export function WizardSection() {
             isStreaming={isStreaming}
             showVoiceButton={voiceEnabled && mode !== 'review'}
             onVoiceStart={() => setVoiceActive(true)}
-            onSaveExit={() => navigate('/dashboard')}
             sectionTitle={section.title}
             preferredMode={preferredMode}
             onPreferredModeChange={setPreferredMode}

@@ -6,14 +6,13 @@ import type { Message } from '../../types'
 
 type PreferredMode = 'undecided' | 'voice' | 'text'
 
-export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, onSaveExit, sectionTitle, preferredMode = 'text', onPreferredModeChange, ready = true }: {
+export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, sectionTitle, preferredMode = 'text', onPreferredModeChange, ready = true }: {
   messages: Message[]
   streamingContent: string | null
   onSend: (message: string) => void
   isStreaming: boolean
   showVoiceButton?: boolean
   onVoiceStart?: () => void
-  onSaveExit?: () => void
   sectionTitle?: string
   preferredMode?: PreferredMode
   onPreferredModeChange?: (mode: PreferredMode) => void
@@ -40,17 +39,6 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
 
   return (
     <div className="flex flex-col h-full">
-      {onSaveExit && (
-        <div className="flex items-center border-b border-brand-border px-4 py-2">
-          <button
-            onClick={onSaveExit}
-            className="flex items-center gap-1.5 rounded-lg border border-brand-border bg-white px-3 py-1.5 text-sm text-brand-text hover:bg-gray-50"
-          >
-            Save &amp; Exit
-          </button>
-        </div>
-      )}
-
       {showLauncher ? (
         <ConversationLauncher
           sectionTitle={sectionTitle ?? 'this section'}
