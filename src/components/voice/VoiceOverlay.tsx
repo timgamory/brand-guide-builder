@@ -214,15 +214,17 @@ export function VoiceOverlay({
         {/* Question card */}
         <div className="mb-4 rounded-xl border border-brand-border bg-brand-bg-warm p-4">
           {state === 'ai_speaking' ? (
-            <div className="flex flex-col items-center gap-3 py-4">
-              <div className="flex items-end gap-1">
-                <span className="inline-block h-3 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:0ms]" />
-                <span className="inline-block h-5 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:100ms]" />
-                <span className="inline-block h-7 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:200ms]" />
-                <span className="inline-block h-5 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:300ms]" />
-                <span className="inline-block h-3 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:400ms]" />
+            <div className="flex flex-col items-center gap-4 py-6">
+              <div className="flex items-end gap-1.5">
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:0ms]" style={{height: '12px', animationDuration: '0.8s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:150ms]" style={{height: '24px', animationDuration: '0.6s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:300ms]" style={{height: '32px', animationDuration: '0.7s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:100ms]" style={{height: '20px', animationDuration: '0.9s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:250ms]" style={{height: '28px', animationDuration: '0.65s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:50ms]" style={{height: '16px', animationDuration: '0.75s'}} />
+                <span className="inline-block w-1.5 rounded-full bg-brand-accent-coral animate-bounce [animation-delay:200ms]" style={{height: '24px', animationDuration: '0.85s'}} />
               </div>
-              <p className="font-body text-body-sm text-brand-text-muted">Listening...</p>
+              <p className="font-body text-body-sm text-brand-text-muted">Speaking...</p>
             </div>
           ) : (
             <p className="font-body text-body text-brand-text">
