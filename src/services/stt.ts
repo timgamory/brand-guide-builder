@@ -103,3 +103,102 @@ export class BrowserSTTService implements STTService {
     }
   }
 }
+
+/**
+ * Cloud STT service that records audio via MediaRecorder and sends it
+ * to the /api/stt Edge Function (OpenAI Whisper) for transcription.
+ * Works in all browsers that support MediaRecorder (Chrome, Firefox, Safari).
+ */
+export class CloudSTTService implements STTService {
+  private mediaRecorder: MediaRecorder | null = null
+  private stream: MediaStream | null = null
+  private chunks: Blob[] = []
+  private listening = false
+  private interimCallback: ((text: string) => void) | null = null
+
+  start(): void {
+    this.chunks = []
+    this.listening = true
+
+    // Fire interim callback to show listening state
+    if (this.interimCallback) {
+      this.interimCallback('(listening...)')
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      this.stream = stream
+      this.mediaRecorder = new MediaRecorder(stream)
+
+      this.mediaRecorder.ondataavailable = (event: BlobEvent) => {
+        if (event.data.size > 0) {
+          this.chunks.push(event.data)
+        }
+      }
+
+      this.mediaRecorder.start(250)
+    }).catch(() => {
+      this.listening = false
+    })
+  }
+
+  async stop(): Promise<string> {
+    this.listening = false
+
+    if (!this.mediaRecorder || this.mediaRecorder.state === 'inactive') {
+      return ''
+    }
+
+    // Wait for MediaRecorder to finish producing data
+    const blob = await new Promise<Blob>(resolve => {
+      this.mediaRecorder!.onstop = () => {
+        resolve(new Blob(this.chunks, { type: this.mediaRecorder!.mimeType || 'audio/webm' }))
+      }
+      this.mediaRecorder!.stop()
+    })
+
+    // Stop all mic tracks
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop())
+      this.stream = null
+    }
+
+    if (blob.size === 0) {
+      return ''
+    }
+
+    // Send to cloud STT endpoint
+    const formData = new FormData()
+    formData.append('audio', blob, 'recording.webm')
+
+    const response = await fetch('/api/stt', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error('Cloud STT request failed')
+    }
+
+    const result = (await response.json()) as { text: string }
+    return result.text
+  }
+
+  onInterim(cb: (text: string) => void): void {
+    this.interimCallback = cb
+  }
+
+  isListening(): boolean {
+    return this.listening
+  }
+}
+
+/**
+ * Factory that returns the appropriate STT service based on provider preference.
+ * Falls back to CloudSTTService when browser STT is unavailable.
+ */
+export function createSTTService(provider: 'browser' | 'cloud'): STTService {
+  if (provider === 'browser' && BrowserSTTService.isAvailable()) {
+    return new BrowserSTTService()
+  }
+  return new CloudSTTService()
+}
