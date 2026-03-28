@@ -34,6 +34,7 @@ function isValidOrigin(req: Request): boolean {
   const origin = req.headers.get('origin') ?? ''
   const referer = req.headers.get('referer') ?? ''
   const allowedHosts = [
+    'elevate-brand',
     'brand-guide-builder',
     'localhost',
     '127.0.0.1',
