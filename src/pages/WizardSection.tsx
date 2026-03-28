@@ -40,6 +40,9 @@ export function WizardSection() {
   const [voiceActive, setVoiceActive] = useState(false)
   const { voiceEnabled } = useVoiceSettings()
   const [isReviewDetected, setIsReviewDetected] = useState(false)
+  const [preferredMode, setPreferredMode] = useState<'undecided' | 'voice' | 'text'>(
+    voiceEnabled ? 'undecided' : 'text'
+  )
 
   const section = sectionId ? getSection(sectionId) : undefined
 
@@ -52,6 +55,7 @@ export function WizardSection() {
     setRevisionCount(0)
     setIsReviewDetected(false)
     setVoiceActive(false)
+    setPreferredMode(voiceEnabled ? 'undecided' : 'text')
     track('section.started', { sectionId })
 
     if (session.path === 'intern') {
@@ -72,13 +76,14 @@ export function WizardSection() {
   }, [isIntern, sectionId])
 
   // Send AI opener when entering a fresh interview/synthesis section
+  // Wait until user has chosen a mode (voice or text) before sending opener
   useEffect(() => {
     if (!session || !sectionId || messages.length > 0 || isStreaming) return
-    // Only send opener for interview mode (entrepreneur) or if in synthesis mode (intern)
     if (mode !== 'interview' && mode !== 'synthesis') return
+    if (preferredMode === 'undecided') return
     const opener = getOpener(session, sectionId)
     addMessage({ role: 'assistant', content: opener })
-  }, [session, sectionId, messages.length, isStreaming, addMessage, mode])
+  }, [session, sectionId, messages.length, isStreaming, addMessage, mode, preferredMode])
 
   // Research mode handlers
   const handleToggleTask = useCallback((taskId: string) => {
@@ -388,6 +393,8 @@ export function WizardSection() {
             onVoiceStart={() => setVoiceActive(true)}
             onSaveExit={() => navigate('/dashboard')}
             sectionTitle={section.title}
+            preferredMode={preferredMode}
+            onPreferredModeChange={setPreferredMode}
           />
         )}
       </div>

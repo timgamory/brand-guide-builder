@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { MessageBubble } from './MessageBubble'
 import { ChatInput } from './ChatInput'
 import { ConversationLauncher } from './ConversationLauncher'
@@ -6,7 +6,7 @@ import type { Message } from '../../types'
 
 type PreferredMode = 'undecided' | 'voice' | 'text'
 
-export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, onSaveExit, sectionTitle }: {
+export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, onSaveExit, sectionTitle, preferredMode = 'text', onPreferredModeChange }: {
   messages: Message[]
   streamingContent: string | null
   onSend: (message: string) => void
@@ -15,18 +15,10 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
   onVoiceStart?: () => void
   onSaveExit?: () => void
   sectionTitle?: string
+  preferredMode?: PreferredMode
+  onPreferredModeChange?: (mode: PreferredMode) => void
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [preferredMode, setPreferredMode] = useState<PreferredMode>(
-    showVoiceButton ? 'undecided' : 'text'
-  )
-
-  // Reset to undecided when messages are cleared (Start Over)
-  useEffect(() => {
-    if (messages.length === 0 && showVoiceButton) {
-      setPreferredMode('undecided')
-    }
-  }, [messages.length, showVoiceButton])
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -37,12 +29,12 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
   const showLauncher = messages.length === 0 && preferredMode === 'undecided' && showVoiceButton
 
   const handleVoiceFromLauncher = () => {
-    setPreferredMode('voice')
+    onPreferredModeChange?.('voice')
     onVoiceStart?.()
   }
 
   const handleChooseText = () => {
-    setPreferredMode('text')
+    onPreferredModeChange?.('text')
   }
 
   return (
