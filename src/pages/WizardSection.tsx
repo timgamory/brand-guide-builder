@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useBrandGuideStore } from '../stores/brandGuideStore'
 import { useConversationStore } from '../stores/conversationStore'
 import { useReflectionStore } from '../stores/reflectionStore'
-import { getSection } from '../data/sections'
+import { getSection, getNextSection } from '../data/sections'
 import { getResearchTasks } from '../data/researchTasks'
 import { buildSystemPrompt, getOpener } from '../services/prompts/builder'
 import { sendMessage, parseSectionReview } from '../services/ai'
@@ -272,33 +272,66 @@ export function WizardSection() {
         {session.sections[sectionId ?? '']?.status === 'approved' && mode !== 'review' ? (
           <div className="overflow-y-auto h-full">
             <div className="max-w-full md:max-w-2xl mx-auto p-4 md:p-6 space-y-6">
+              {/* Save & Exit link */}
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
+              >
+                &larr; Save &amp; Exit
+              </button>
+
+              {/* Success banner */}
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
                 <span>&#10003;</span> This section has been approved.
               </div>
+
+              {/* Approved draft card */}
               <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
                 <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Approved Draft</h3>
                 <div className="text-body leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
                   {session.sections[sectionId ?? '']?.approvedDraft}
                 </div>
               </div>
-              <div className="flex gap-4">
+
+              {/* Refine / Start over actions */}
+              <div className="flex items-center gap-4">
                 <button
                   onClick={handleRefine}
-                  className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
+                  className="px-4 py-2 rounded-lg border border-brand-primary text-brand-primary text-sm font-medium hover:bg-brand-primary/5 transition-colors"
                 >
                   Refine this section
                 </button>
                 <button
                   onClick={() => {
-                    if (window.confirm('Start over from scratch? This will clear all conversation history for this section.')) {
+                    if (window.confirm('Are you sure? This will discard your approved draft and start the conversation over.')) {
                       handleStartOver()
                     }
                   }}
-                  className="text-sm text-red-400 hover:text-red-600 transition-colors"
+                  className="text-sm text-red-400/70 hover:text-red-600 transition-colors"
                 >
                   Start over
                 </button>
               </div>
+
+              {/* Next Section CTA */}
+              {(() => {
+                const next = sectionId ? getNextSection(sectionId) : null
+                return next ? (
+                  <button
+                    onClick={() => navigate(`/wizard/${next.id}`)}
+                    className="w-full py-3.5 rounded-xl bg-brand-accent-coral text-white font-semibold text-body hover:bg-brand-accent-coral/90 transition-colors"
+                  >
+                    Continue to {next.title} &rarr;
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate('/preview')}
+                    className="w-full py-3.5 rounded-xl bg-brand-accent-coral text-white font-semibold text-body hover:bg-brand-accent-coral/90 transition-colors"
+                  >
+                    Preview Brand Guide &rarr;
+                  </button>
+                )
+              })()}
             </div>
           </div>
         ) : mode === 'research' ? (
@@ -312,6 +345,14 @@ export function WizardSection() {
           </div>
         ) : mode === 'review' && review ? (
           <div className="overflow-y-auto h-full">
+            <div className="max-w-full md:max-w-2xl mx-auto px-4 md:px-6 pt-4 md:pt-6">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="text-sm text-brand-text-muted hover:text-brand-text transition-colors"
+              >
+                &larr; Save &amp; Exit
+              </button>
+            </div>
             <SectionReview
               review={review}
               onApprove={handleApprove}
