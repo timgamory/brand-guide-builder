@@ -167,10 +167,6 @@ export function WizardSection() {
     }
   }, [session, sectionId, messages, addMessage, setStreaming, updateSectionStatus, isIntern])
 
-  const handleEndVoiceSession = useCallback(() => {
-    setVoiceActive(false)
-    navigate('/dashboard')
-  }, [navigate])
 
   const handleApprove = useCallback(async (draft: string) => {
     if (!sectionId) return
@@ -349,6 +345,7 @@ export function WizardSection() {
             isStreaming={isStreaming}
             showVoiceButton={voiceEnabled && mode !== 'review'}
             onVoiceStart={() => setVoiceActive(true)}
+            onSaveExit={() => navigate('/dashboard')}
           />
         )}
       </div>
@@ -359,7 +356,6 @@ export function WizardSection() {
           onSend={handleSend}
           isReviewDetected={isReviewDetected}
           onClose={() => setVoiceActive(false)}
-          onEndSession={handleEndVoiceSession}
         />
       )}
     </div>

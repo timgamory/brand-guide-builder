@@ -11,7 +11,6 @@ interface VoiceOverlayProps {
   onSend: (text: string) => Promise<void>
   isReviewDetected: boolean
   onClose: () => void
-  onEndSession: () => void
 }
 
 export function VoiceOverlay({
@@ -19,7 +18,6 @@ export function VoiceOverlay({
   onSend,
   isReviewDetected,
   onClose,
-  onEndSession,
 }: VoiceOverlayProps) {
   const { state, transition, reset } = useVoiceStateMachine()
   const { sttProvider } = useVoiceSettings()
@@ -287,22 +285,16 @@ export function VoiceOverlay({
         </p>
 
         {/* Footer */}
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center">
           <button
             onClick={() => {
               ttsRef.current.stop()
               if (sttRef.current) { sttRef.current.stop(); sttRef.current = null }
               onClose()
             }}
-            className="rounded-lg border border-brand-border px-5 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
+            className="rounded-lg border border-brand-border px-6 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
           >
             Back to Text
-          </button>
-          <button
-            onClick={onEndSession}
-            className="rounded-lg border border-brand-border px-5 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
-          >
-            Save & Exit
           </button>
         </div>
       </div>
