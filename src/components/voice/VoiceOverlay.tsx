@@ -285,7 +285,7 @@ export function VoiceOverlay({
             onClick={onEndSession}
             className="rounded-lg border border-brand-border px-4 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
           >
-            End Session
+            I'm Done, Review This
           </button>
           <button
             onClick={() => {
