@@ -30,4 +30,18 @@ describe('useVoiceSettings', () => {
     expect(result.current.sttProvider).toBe('cloud')
     expect(localStorage.getItem('voiceSttProvider')).toBe('cloud')
   })
+
+  it('setVoiceEnabled updates localStorage and state', () => {
+    const { result } = renderHook(() => useVoiceSettings())
+    act(() => result.current.setVoiceEnabled(false))
+    expect(result.current.voiceEnabled).toBe(false)
+    expect(localStorage.getItem('voiceEnabled')).toBe('false')
+  })
+
+  it('setFollowUpsEnabled updates localStorage and state', () => {
+    const { result } = renderHook(() => useVoiceSettings())
+    act(() => result.current.setFollowUpsEnabled(true))
+    expect(result.current.followUpsEnabled).toBe(true)
+    expect(localStorage.getItem('voiceFollowUps')).toBe('true')
+  })
 })

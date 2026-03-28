@@ -4,7 +4,10 @@ type SttProvider = 'browser' | 'cloud'
 
 export function useVoiceSettings() {
   const [voiceEnabled, setVoiceEnabledState] = useState(
-    () => localStorage.getItem('voiceEnabled') !== 'false'
+    () => {
+      const v = localStorage.getItem('voiceEnabled')
+      return v === null ? true : v === 'true'
+    }
   )
   const [sttProvider, setSttProviderState] = useState<SttProvider>(
     () => (localStorage.getItem('voiceSttProvider') as SttProvider) || 'browser'
