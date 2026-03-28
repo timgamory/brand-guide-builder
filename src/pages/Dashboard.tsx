@@ -47,7 +47,9 @@ export function Dashboard() {
   // Load sessions when user is present
   useEffect(() => {
     if (user) {
-      loadSessions().then(() => setLoaded(true))
+      loadSessions()
+        .then(() => setLoaded(true))
+        .catch(() => setLoaded(true))
     }
   }, [user, loadSessions])
 
