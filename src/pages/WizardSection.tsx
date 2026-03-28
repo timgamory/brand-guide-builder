@@ -43,13 +43,15 @@ export function WizardSection() {
   const [preferredMode, setPreferredMode] = useState<'undecided' | 'voice' | 'text'>(
     voiceEnabled ? 'undecided' : 'text'
   )
+  const [conversationLoaded, setConversationLoaded] = useState(false)
 
   const section = sectionId ? getSection(sectionId) : undefined
 
   // Load conversation and intern-specific data when section changes
   useEffect(() => {
     if (!session || !sectionId) return
-    loadConversation(session.id, sectionId)
+    setConversationLoaded(false)
+    loadConversation(session.id, sectionId).then(() => setConversationLoaded(true))
     setReview(null)
     setApiError(false)
     setRevisionCount(0)
@@ -395,6 +397,7 @@ export function WizardSection() {
             sectionTitle={section.title}
             preferredMode={preferredMode}
             onPreferredModeChange={setPreferredMode}
+            ready={conversationLoaded}
           />
         )}
       </div>

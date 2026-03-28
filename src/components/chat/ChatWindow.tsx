@@ -6,7 +6,7 @@ import type { Message } from '../../types'
 
 type PreferredMode = 'undecided' | 'voice' | 'text'
 
-export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, onSaveExit, sectionTitle, preferredMode = 'text', onPreferredModeChange }: {
+export function ChatWindow({ messages, streamingContent, onSend, isStreaming, showVoiceButton, onVoiceStart, onSaveExit, sectionTitle, preferredMode = 'text', onPreferredModeChange, ready = true }: {
   messages: Message[]
   streamingContent: string | null
   onSend: (message: string) => void
@@ -17,6 +17,7 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
   sectionTitle?: string
   preferredMode?: PreferredMode
   onPreferredModeChange?: (mode: PreferredMode) => void
+  ready?: boolean
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -26,7 +27,7 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
     }
   }, [messages, streamingContent])
 
-  const showLauncher = messages.length === 0 && preferredMode === 'undecided' && showVoiceButton
+  const showLauncher = ready && messages.length === 0 && preferredMode === 'undecided' && showVoiceButton
 
   const handleVoiceFromLauncher = () => {
     onPreferredModeChange?.('voice')
