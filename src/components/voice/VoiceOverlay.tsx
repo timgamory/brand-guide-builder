@@ -279,24 +279,13 @@ export function VoiceOverlay({
           {getStateLabel(state)}
         </p>
 
-        {/* Footer buttons */}
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={onEndSession}
-            className="rounded-lg border border-brand-border px-4 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
-          >
-            I'm Done, Review This
-          </button>
-          <button
-            onClick={() => {
-              ttsRef.current.stop()
-              onClose()
-            }}
-            className="rounded-lg border border-brand-border px-4 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
-          >
-            Skip to Text
-          </button>
-        </div>
+        {/* Footer */}
+        <button
+          onClick={onEndSession}
+          className="rounded-lg border border-brand-border px-6 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
+        >
+          I'm Done
+        </button>
       </div>
     </div>
   )
