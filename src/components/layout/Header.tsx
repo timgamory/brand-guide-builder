@@ -41,7 +41,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
       </div>
       <div className="flex items-center gap-4">
         {session?.brandData.orgName && (
-          <span className="hidden sm:inline font-heading text-brand-accent-gold text-[15px] font-medium">
+          <span className="hidden sm:inline font-heading text-brand-accent-gold text-body font-medium">
             {session.brandData.orgName}
           </span>
         )}

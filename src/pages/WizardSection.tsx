@@ -168,6 +168,14 @@ export function WizardSection() {
     const messageCount = useConversationStore.getState().messages.length
     track('section.approved', { sectionId, messageCount, draftLength: draft.length, revisionNumber: revisionCount })
     await approveSectionDraft(sectionId, draft)
+    // Extract org name from conversation when basics section is approved
+    if (sectionId === 'basics' && !useBrandGuideStore.getState().session?.brandData.orgName) {
+      const convMessages = useConversationStore.getState().messages
+      const firstUserMsg = convMessages.find(m => m.role === 'user')
+      if (firstUserMsg) {
+        await updateBrandData({ orgName: firstUserMsg.content.trim() })
+      }
+    }
     const store = useBrandGuideStore.getState()
     await store.nextSection()
     const next = useBrandGuideStore.getState().session?.currentSection
@@ -223,7 +231,7 @@ export function WizardSection() {
         <div className="flex items-center gap-3">
           <h2 className="font-heading text-xl md:text-2xl font-semibold text-brand-text">{section.title}</h2>
           {section.optional && (
-            <span className="text-[11px] font-semibold text-brand-text-faint uppercase tracking-wider bg-brand-bg-warm px-2.5 py-0.5 rounded-md">Optional</span>
+            <span className="text-fine font-semibold text-brand-text-faint uppercase tracking-wider bg-brand-bg-warm px-2.5 py-0.5 rounded-md">Optional</span>
           )}
           {section.optional && session.sections[sectionId ?? '']?.status !== 'in_progress' && session.sections[sectionId ?? '']?.status !== 'approved' && (
             <button
@@ -234,7 +242,7 @@ export function WizardSection() {
             </button>
           )}
         </div>
-        <p className="text-brand-text-muted text-[15px] mt-1">{section.subtitle}</p>
+        <p className="text-brand-text-muted text-body mt-1">{section.subtitle}</p>
       </div>
 
       {/* API error banner */}
@@ -260,7 +268,7 @@ export function WizardSection() {
               </div>
               <div className="bg-white rounded-2xl border border-brand-border p-4 md:p-6">
                 <h3 className="font-heading text-lg font-semibold text-brand-text mb-3">Approved Draft</h3>
-                <div className="text-[15px] leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
+                <div className="text-body leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
                   {session.sections[sectionId ?? '']?.approvedDraft}
                 </div>
               </div>

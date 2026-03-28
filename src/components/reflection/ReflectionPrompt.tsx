@@ -22,12 +22,12 @@ export function ReflectionPrompt({ sectionId, value, onChange }: {
   return (
     <div className="bg-brand-bg-warm rounded-2xl border border-brand-border p-4 md:p-6">
       <h3 className="font-heading text-lg font-semibold text-brand-text mb-2">Your Reflection</h3>
-      <p className="text-[15px] text-brand-text-secondary mb-4 leading-relaxed">{prompt}</p>
+      <p className="text-body text-brand-text-secondary mb-4 leading-relaxed">{prompt}</p>
       <textarea
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder="Write your reflection..."
-        className="w-full min-h-[120px] text-[15px] leading-relaxed text-brand-text-secondary bg-white rounded-xl p-4 border border-brand-border outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body"
+        className="w-full min-h-[120px] text-body leading-relaxed text-brand-text-secondary bg-white rounded-xl p-4 border border-brand-border outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all resize-y font-body"
       />
     </div>
   )

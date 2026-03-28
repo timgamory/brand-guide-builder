@@ -31,7 +31,7 @@ export function TaskList({ tasks, onToggle, onNotesChange, onProceed }: {
       <button
         onClick={onProceed}
         disabled={!halfDone}
-        className="w-full mt-4 px-6 py-4 rounded-xl bg-brand-primary text-white font-semibold text-[15px] hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full mt-4 px-6 py-4 rounded-xl bg-brand-primary text-white font-semibold text-body hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
         I've done my research — let's discuss →
       </button>

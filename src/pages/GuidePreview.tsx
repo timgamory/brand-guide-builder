@@ -179,11 +179,11 @@ export function GuidePreview() {
               </button>
             </div>
             {consistencyResult.verdict === 'consistent' ? (
-              <p className="text-[15px] text-brand-text-secondary">Your brand guide is internally consistent across all sections.</p>
+              <p className="text-body-sm text-brand-text-secondary">Your brand guide is internally consistent across all sections.</p>
             ) : (
               <ul className="space-y-2">
                 {consistencyResult.issues.map((issue, i) => (
-                  <li key={i} className="text-[15px] text-brand-text-secondary">
+                  <li key={i} className="text-body-sm text-brand-text-secondary">
                     <span className="font-medium">{issue.sections.join(' / ')}:</span> {issue.description}
                   </li>
                 ))}
@@ -202,7 +202,7 @@ export function GuidePreview() {
               return (
                 <div key={section.id}>
                   <h2 className="font-heading text-xl font-semibold text-brand-text mb-3 pb-2 border-b border-brand-border">{title}</h2>
-                  <div className="text-[15px] leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
+                  <div className="text-body-sm leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
                     {state.approvedDraft}
                   </div>
                 </div>

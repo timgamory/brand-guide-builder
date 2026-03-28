@@ -66,7 +66,7 @@ export function PresentationView() {
         <h2 className="font-heading text-2xl font-bold text-brand-text mb-4 pb-3 border-b border-brand-border">
           {title}
         </h2>
-        <div className="text-[15px] leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
+        <div className="text-body-sm leading-relaxed text-brand-text-secondary whitespace-pre-wrap">
           {draft}
         </div>
       </div>
@@ -74,14 +74,14 @@ export function PresentationView() {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="px-6 py-3 rounded-xl text-white font-medium text-[15px] border border-white/20 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="px-6 py-3 rounded-xl text-white font-medium text-body-sm border border-white/20 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           ← Previous
         </button>
         <button
           onClick={handleNext}
           disabled={currentIndex === approvedSections.length - 1}
-          className="px-6 py-3 rounded-xl text-white font-medium text-[15px] border border-white/20 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="px-6 py-3 rounded-xl text-white font-medium text-body-sm border border-white/20 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           Next →
         </button>
