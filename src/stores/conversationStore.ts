@@ -26,12 +26,9 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   researchTasks: [],
 
   loadConversation: async (sessionId, sectionId) => {
+    set({ messages: [], currentSessionId: sessionId, currentSectionId: sectionId })
     const convo = await getConversation(sessionId, sectionId)
-    set({
-      messages: convo?.messages ?? [],
-      currentSessionId: sessionId,
-      currentSectionId: sectionId,
-    })
+    set({ messages: convo?.messages ?? [] })
   },
 
   addMessage: async (message) => {
