@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router-dom'
-import { Menu } from 'lucide-react'
+import { Menu, LogOut } from 'lucide-react'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
+import { useAuth } from '../../hooks/useAuth'
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate()
   const session = useBrandGuideStore(s => s.session)
+  const { user, signOut } = useAuth()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/')
+  }
 
   const pathLabel = session?.path === 'intern'
     ? `Building for ${session.internMeta?.fellowName ?? 'Fellow'}`
@@ -32,11 +39,23 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
       </div>
-      {session?.brandData.orgName && (
-        <span className="hidden sm:inline font-heading text-brand-accent-gold text-[15px] font-medium">
-          {session.brandData.orgName}
-        </span>
-      )}
+      <div className="flex items-center gap-4">
+        {session?.brandData.orgName && (
+          <span className="hidden sm:inline font-heading text-brand-accent-gold text-[15px] font-medium">
+            {session.brandData.orgName}
+          </span>
+        )}
+        {user && (
+          <button
+            onClick={handleSignOut}
+            className="text-white/60 hover:text-white transition-colors p-1.5"
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <LogOut size={18} />
+          </button>
+        )}
+      </div>
     </header>
   )
 }

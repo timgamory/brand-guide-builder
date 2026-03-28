@@ -10,7 +10,7 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 
 - `npm run dev` — Start dev server (Vite, port 5173)
 - `npm run build` — Production build (`tsc -b && vite build`)
-- `npx vitest run` — Run all tests (60 tests across 12 files)
+- `npx vitest run` — Run all tests (68 tests across 13 files)
 - `npx vitest run src/path/to/test.ts` — Run single test file
 - `npx tsc -b` — Type check (use `-b` not `--noEmit` — matches the build command and catches unused variables)
 
@@ -18,7 +18,9 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 
 **Stack**: Vite + React 18 + TypeScript + Tailwind CSS 4 + shadcn/ui + Zustand + Supabase + React Router + Anthropic JS SDK + docx
 
-**Data flow**: Zustand stores (reactive UI) hydrate from and write-through to Supabase (Postgres). WizardShell hydrates the most recent session on mount so page refreshes work. Sessions are scoped to users via URL slugs (`/start/:slug`) stored in localStorage. Anthropic API called via Vercel Edge Function proxy (`api/chat.ts`) with server-side API key, or directly from browser if user has a local key in localStorage (model: `claude-sonnet-4-6`).
+**Auth**: Supabase Magic Link authentication. Users enter email on the landing page, receive a magic link, and click to sign in. Auth state managed by `useAuth` hook (`src/hooks/useAuth.ts`) wrapping `supabase.auth.onAuthStateChange`. WizardShell and route guards redirect unauthenticated users to `/`. Auth callback handled at `/auth/callback`.
+
+**Data flow**: Zustand stores (reactive UI) hydrate from and write-through to Supabase (Postgres). WizardShell hydrates the most recent session on mount so page refreshes work. Sessions are scoped to authenticated users via `user_id` column (from `auth.uid()`), enforced by RLS policies. Anthropic API called via Vercel Edge Function proxy (`api/chat.ts`) with server-side API key, or directly from browser if user has a local key in localStorage (model: `claude-sonnet-4-6`).
 
 **Key patterns**:
 - Section definitions in `src/data/sections.ts` drive both AI conversation (field keys = data to extract) and fallback form mode
@@ -47,6 +49,8 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 - `docs/plans/2026-03-26-phase-4-polish.md` — Phase 4: Skip, summarization, consistency check, presentation view
 - `docs/plans/2026-03-26-phase-4-polish-design.md` — Phase 4 design rationale
 - `docs/plans/2026-03-26-supabase-backend-design.md` — Supabase backend schema, RLS, and env vars
+- `docs/plans/2026-03-27-magic-link-auth-design.md` — Magic link auth + session identity refactor design
+- `docs/plans/2026-03-27-magic-link-auth-implementation.md` — Magic link auth implementation plan
 
 ## Visual Identity
 
