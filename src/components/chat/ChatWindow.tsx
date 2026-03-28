@@ -50,13 +50,15 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
           </div>
         </div>
       )}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-6 space-y-1">
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} role={msg.role} content={msg.content} />
-        ))}
-        {isStreaming && streamingContent && (
-          <MessageBubble role="assistant" content={streamingContent} isStreaming />
-        )}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-6 flex flex-col justify-end">
+        <div className="space-y-1">
+          {messages.map((msg, i) => (
+            <MessageBubble key={i} role={msg.role} content={msg.content} />
+          ))}
+          {isStreaming && streamingContent && (
+            <MessageBubble role="assistant" content={streamingContent} isStreaming />
+          )}
+        </div>
       </div>
       <ChatInput onSend={onSend} disabled={isStreaming} />
     </div>
