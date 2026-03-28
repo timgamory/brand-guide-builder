@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { LogOut, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
-import { useAuth } from '../../hooks/useAuth'
 import { SECTIONS } from '../../data/sections'
 import { cn } from '../../lib/utils'
 import type { SectionStatus } from '../../types'
@@ -36,14 +35,8 @@ function StatusIcon({ status }: { status: SectionStatus }) {
 export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const session = useBrandGuideStore(s => s.session)
   const navigateToSection = useBrandGuideStore(s => s.navigateToSection)
-  const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const { sectionId } = useParams()
-
-  const handleSignOut = async () => {
-    await signOut()
-    navigate('/')
-  }
 
   const currentSectionId = sectionId ?? session?.currentSection ?? 'basics'
 
@@ -88,17 +81,14 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
         </p>
       )}
 
-      {user && (
-        <div className="mt-auto pt-4 px-5 border-t border-brand-border">
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-2 text-brand-text-muted hover:text-brand-text text-sm transition-colors py-2"
-          >
-            <LogOut size={14} />
-            Sign out
-          </button>
-        </div>
-      )}
+      <div className="mt-auto pt-4 px-5 border-t border-brand-border">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 text-brand-text-muted hover:text-brand-text text-sm transition-colors py-2"
+        >
+          &larr; Save &amp; Exit
+        </button>
+      </div>
     </nav>
   )
 }

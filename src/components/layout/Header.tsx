@@ -1,14 +1,21 @@
 import { useNavigate } from 'react-router-dom'
-import { Menu } from 'lucide-react'
+import { Menu, LogOut } from 'lucide-react'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
+import { useAuth } from '../../hooks/useAuth'
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate()
   const session = useBrandGuideStore(s => s.session)
+  const { user, signOut } = useAuth()
 
-  const pathLabel = session?.path === 'intern'
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/')
+  }
+
+  const subtitle = session?.path === 'intern'
     ? `Building for ${session.internMeta?.fellowName ?? 'Fellow'}`
-    : 'Your Brand'
+    : session?.brandData.orgName || null
 
   return (
     <header className="bg-brand-primary px-4 py-3.5 md:px-8 md:py-5 flex items-center justify-between">
@@ -27,18 +34,20 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           >
             Brand Guide Builder
           </h1>
-          {session && (
-            <p className="text-brand-text-faint text-sm mt-0.5">{pathLabel}</p>
+          {subtitle && (
+            <p className="text-brand-accent-gold text-sm font-medium mt-0.5">{subtitle}</p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-4">
-        {session?.brandData.orgName && (
-          <span className="hidden sm:inline font-heading text-brand-accent-gold text-body font-medium">
-            {session.brandData.orgName}
-          </span>
-        )}
-      </div>
+      {user && (
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm transition-colors"
+        >
+          <LogOut size={14} />
+          Sign out
+        </button>
+      )}
     </header>
   )
 }
