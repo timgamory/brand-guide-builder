@@ -18,7 +18,7 @@ AI-powered Brand Guide Builder — two-path (Entrepreneur + Intern) wizard that 
 
 **Stack**: Vite + React 18 + TypeScript + Tailwind CSS 4 + shadcn/ui + Zustand + Supabase + React Router + Anthropic JS SDK + docx
 
-**Auth**: Supabase Magic Link authentication. Users enter email on the landing page, receive a magic link, and click to sign in. Auth state managed by `useAuth` hook (`src/hooks/useAuth.ts`) wrapping `supabase.auth.onAuthStateChange`. WizardShell and route guards redirect unauthenticated users to `/`. Auth callback handled at `/auth/callback`.
+**Auth**: Supabase Magic Link authentication. Users land on the marketing homepage (`/`). If logged in, a sticky header shows their avatar and a "Dashboard" button. The single "Get Started" CTA navigates to `/dashboard` (logged in) or shows a magic link form (not logged in). The Dashboard (`/dashboard`) is auth-gated and handles session management, path selection, and inline intern setup. Auth callback redirects to `/dashboard`. Auth state managed by `useAuth` hook (`src/hooks/useAuth.ts`) wrapping `supabase.auth.onAuthStateChange`. WizardShell redirects unauthenticated users to `/dashboard`.
 
 **Data flow**: Zustand stores (reactive UI) hydrate from and write-through to Supabase (Postgres). WizardShell hydrates the most recent session on mount so page refreshes work. Sessions are scoped to authenticated users via `user_id` column (from `auth.uid()`), enforced by RLS policies. Anthropic API called via Vercel Edge Function proxy (`api/chat.ts`) with server-side API key, or directly from browser if user has a local key in localStorage (model: `claude-sonnet-4-6`).
 
