@@ -58,9 +58,12 @@ Warm off-white background (#faf8f5), Fraunces (headings) + DM Sans (body), slate
 
 ## Deployment
 
-Vercel auto-deploys from `main` branch on GitHub (`timgamory/brand-guide-builder`). SPA routing handled by `vercel.json` rewrites. API proxy at `/api/chat`. Live at `elevate-brand.vercel.app`.
+Vercel auto-deploys from `main` branch on GitHub (`timgamory/brand-guide-builder`). SPA routing handled by `vercel.json` rewrites. API proxies at `/api/chat`, `/api/tts`, `/api/stt`. Live at `elevate-brand.vercel.app`.
 
 **Env vars** (set in Vercel project settings):
 - `ANTHROPIC_API_KEY` — server-side, used by API proxy
 - `VITE_SUPABASE_URL` — Supabase project URL (public, baked into client build)
 - `VITE_SUPABASE_ANON_KEY` — Supabase anon key (public, baked into client build)
+- `ELEVENLABS_API_KEY` — server-side, used by TTS proxy (`api/tts.ts`)
+- `ELEVENLABS_VOICE_ID` — ElevenLabs voice ID for TTS
+- `STT_PROVIDER_API_KEY` — server-side, OpenAI API key for Whisper cloud STT (optional, only if cloud STT enabled)
