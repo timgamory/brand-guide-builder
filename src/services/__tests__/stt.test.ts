@@ -205,6 +205,30 @@ describe('BrowserSTTService', () => {
     })
   })
 
+  describe('onSilenceDetected()', () => {
+    it('fires silence callback after 3 seconds of no input', () => {
+      vi.useFakeTimers()
+      const stt = new BrowserSTTService()
+      const silenceCb = vi.fn()
+      stt.onSilenceDetected(silenceCb)
+      stt.start()
+
+      // Simulate a speech result to start the timer
+      const resultEvent = { results: { 0: { 0: { transcript: 'hello' }, isFinal: true, length: 1 }, length: 1 }, resultIndex: 0 }
+      mockRecognition.onresult!(resultEvent)
+
+      // 2 seconds - should not fire
+      vi.advanceTimersByTime(2000)
+      expect(silenceCb).not.toHaveBeenCalled()
+
+      // 3 seconds total - should fire
+      vi.advanceTimersByTime(1000)
+      expect(silenceCb).toHaveBeenCalledOnce()
+
+      vi.useRealTimers()
+    })
+  })
+
   describe('error handling', () => {
     it('stops listening on error and resolves stop() with captured transcript', async () => {
       const stt = new BrowserSTTService()

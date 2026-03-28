@@ -14,6 +14,8 @@ export class BrowserSTTService implements STTService {
   private listening = false
   private finalTranscript = ''
   private interimCallback: ((text: string) => void) | null = null
+  private silenceTimer: ReturnType<typeof setTimeout> | null = null
+  private onSilence: (() => void) | null = null
 
   static isAvailable(): boolean {
     return (
@@ -43,6 +45,10 @@ export class BrowserSTTService implements STTService {
 
     this.recognition.onresult = (event: Record<string, unknown>) => {
       this.handleResult(event)
+      if (this.silenceTimer) clearTimeout(this.silenceTimer)
+      this.silenceTimer = setTimeout(() => {
+        this.onSilence?.()
+      }, 3000)
     }
 
     this.recognition.onerror = () => {
@@ -58,6 +64,8 @@ export class BrowserSTTService implements STTService {
   }
 
   stop(): Promise<string> {
+    if (this.silenceTimer) clearTimeout(this.silenceTimer)
+    this.silenceTimer = null
     if (this.recognition && this.listening) {
       ;(this.recognition.stop as () => void)()
     }
@@ -68,6 +76,10 @@ export class BrowserSTTService implements STTService {
 
   onInterim(cb: (text: string) => void): void {
     this.interimCallback = cb
+  }
+
+  onSilenceDetected(cb: () => void): void {
+    this.onSilence = cb
   }
 
   isListening(): boolean {

@@ -4,7 +4,7 @@ import { useVoiceStateMachine } from '@/hooks/useVoiceStateMachine'
 import type { VoiceState } from '@/hooks/useVoiceStateMachine'
 import { useVoiceSettings } from '@/hooks/useVoiceSettings'
 import { TTSService } from '@/services/tts'
-import { createSTTService, type STTService } from '@/services/stt'
+import { createSTTService, BrowserSTTService, type STTService } from '@/services/stt'
 
 interface VoiceOverlayProps {
   messages: Message[]
@@ -31,6 +31,7 @@ export function VoiceOverlay({
   const [interimText, setInterimText] = useState('')
   const [sttError, setSttError] = useState<string | null>(null)
   const [fallbackInput, setFallbackInput] = useState('')
+  const handleMicPressRef = useRef<() => void>(() => {})
 
   // Track the message count so we can detect new assistant messages
   const prevMessageCountRef = useRef(messages.length)
@@ -131,6 +132,11 @@ export function VoiceOverlay({
         const stt = createSTTService(sttProvider)
         sttRef.current = stt
         stt.onInterim((text) => setInterimText(text))
+        if ('onSilenceDetected' in stt) {
+          (stt as BrowserSTTService).onSilenceDetected(() => {
+            handleMicPressRef.current()
+          })
+        }
         stt.start()
         transition('MIC_STARTED')
       } catch (err) {
@@ -147,6 +153,11 @@ export function VoiceOverlay({
         const stt = createSTTService(sttProvider)
         sttRef.current = stt
         stt.onInterim((text) => setInterimText(text))
+        if ('onSilenceDetected' in stt) {
+          (stt as BrowserSTTService).onSilenceDetected(() => {
+            handleMicPressRef.current()
+          })
+        }
         stt.start()
         transition('MIC_STARTED')
       } catch (err) {
@@ -176,6 +187,9 @@ export function VoiceOverlay({
       return
     }
   }, [state, sttProvider, transition, reset, onSend])
+
+  // Keep ref in sync so silence callback always calls the latest version
+  handleMicPressRef.current = handleMicPress
 
   // Fallback text input submit
   const handleFallbackSubmit = useCallback(async () => {
