@@ -261,7 +261,6 @@ function LoginForm() {
         onChange={e => setEmail(e.target.value)}
         placeholder="you@example.com"
         required
-        autoFocus
         className="w-full px-4 py-3 rounded-xl border border-brand-border bg-brand-bg text-brand-text text-[15px] outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 font-body"
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -279,8 +278,10 @@ function LoginForm() {
 /* ─── Get Started Section (simplified) ─── */
 
 function GetStartedSection() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const navigate = useNavigate()
+
+  if (isLoading) return null
 
   return (
     <section id="get-started" className="px-6 py-16 md:py-20">
