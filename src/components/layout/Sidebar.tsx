@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { LogOut } from 'lucide-react'
+import { LogOut, Check } from 'lucide-react'
 import { useBrandGuideStore } from '../../stores/brandGuideStore'
 import { useAuth } from '../../hooks/useAuth'
 import { SECTIONS } from '../../data/sections'
@@ -8,15 +8,29 @@ import type { SectionStatus } from '../../types'
 
 function StatusIcon({ status }: { status: SectionStatus }) {
   if (status === 'approved') {
-    return <span className="text-brand-accent-sage text-xs">&#10003;</span>
+    return (
+      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-accent-sage text-white shrink-0" aria-label="completed">
+        <Check size={12} strokeWidth={3} />
+      </span>
+    )
   }
   if (status === 'in_progress') {
-    return <span className="text-brand-accent-coral text-xs">&#9679;</span>
+    return (
+      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border-2 border-brand-accent-coral shrink-0" aria-label="in progress">
+        <span className="w-2 h-2 rounded-full bg-brand-accent-coral" />
+      </span>
+    )
   }
   if (status === 'skipped') {
-    return <span className="text-brand-text-faint text-xs">&mdash;</span>
+    return (
+      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border-2 border-brand-text-faint text-brand-text-faint text-xs shrink-0" aria-label="skipped">
+        &mdash;
+      </span>
+    )
   }
-  return <span className="text-brand-text-faint text-xs">&#9675;</span>
+  return (
+    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border-2 border-brand-text-faint shrink-0" aria-label="not started" />
+  )
 }
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
@@ -53,7 +67,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             className={cn(
               'block w-full text-left px-5 py-3 md:py-2.5 min-h-[44px] md:min-h-0 border-l-[3px] transition-all font-body text-sm md:text-body-sm cursor-pointer',
               isActive
-                ? 'bg-white border-brand-primary font-semibold text-brand-text'
+                ? 'bg-white border-brand-accent-coral font-semibold text-brand-text'
                 : 'border-transparent text-brand-text-muted hover:text-brand-text hover:bg-white/50'
             )}
           >
@@ -61,7 +75,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
               <StatusIcon status={status} />
               {section.title}
               {section.optional && (
-                <span className="text-micro text-brand-text-faint font-normal uppercase tracking-wider">opt</span>
+                <span className="text-fine text-brand-text-faint font-normal">(optional)</span>
               )}
             </span>
           </button>
