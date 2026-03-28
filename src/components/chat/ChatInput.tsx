@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
-export function ChatInput({ onSend, disabled, quickChips }: {
+export function ChatInput({ onSend, disabled, quickChips, showVoiceButton, onVoiceStart }: {
   onSend: (message: string) => void
   disabled: boolean
   quickChips?: string[]
+  showVoiceButton?: boolean
+  onVoiceStart?: () => void
 }) {
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -56,7 +58,7 @@ export function ChatInput({ onSend, disabled, quickChips }: {
           ))}
         </div>
       )}
-      <div className="flex gap-3 items-end">
+      <div className="flex gap-2 items-end">
         <textarea
           ref={textareaRef}
           value={text}
@@ -67,6 +69,18 @@ export function ChatInput({ onSend, disabled, quickChips }: {
           rows={1}
           className="flex-1 resize-none overflow-hidden px-4 py-3 rounded-xl border border-brand-border-dark bg-brand-bg text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all disabled:opacity-40 font-body"
         />
+        {showVoiceButton && onVoiceStart && (
+          <button
+            onClick={onVoiceStart}
+            className="p-3 rounded-xl border border-brand-border-dark bg-white text-brand-text-muted hover:text-brand-text hover:bg-brand-bg transition-colors shrink-0"
+            aria-label="Start voice input"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2" />
+            </svg>
+          </button>
+        )}
         <button
           onClick={handleSubmit}
           disabled={disabled || !text.trim()}
