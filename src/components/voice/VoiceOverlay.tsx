@@ -28,9 +28,7 @@ export function VoiceOverlay({
   const sttRef = useRef<STTService | null>(null)
 
   const [currentQuestion, setCurrentQuestion] = useState('')
-  const [displayedQuestion, setDisplayedQuestion] = useState('')
   const [interimText, setInterimText] = useState('')
-  const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const [sttError, setSttError] = useState<string | null>(null)
   const [fallbackInput, setFallbackInput] = useState('')
   const handleMicPressRef = useRef<() => void>(() => {})
@@ -69,45 +67,19 @@ export function VoiceOverlay({
     }
 
     setCurrentQuestion(text)
-    setDisplayedQuestion('')
-
-    // Word-by-word typing effect synced to TTS speed
-    // ElevenLabs speaks ~140 words per minute = ~430ms per word
-    const words = text.split(/\s+/)
-    let wordIndex = 0
-    const msPerWord = 430
-    if (typingTimerRef.current) clearInterval(typingTimerRef.current)
-    typingTimerRef.current = setInterval(() => {
-      wordIndex++
-      if (wordIndex >= words.length) {
-        setDisplayedQuestion(text)
-        if (typingTimerRef.current) clearInterval(typingTimerRef.current)
-      } else {
-        setDisplayedQuestion(words.slice(0, wordIndex).join(' '))
-      }
-    }, msPerWord)
 
     let cancelled = false
     ttsRef.current
       .speak(text)
       .then(() => {
-        if (!cancelled) {
-          setDisplayedQuestion(text)
-          if (typingTimerRef.current) clearInterval(typingTimerRef.current)
-          transition('TTS_ENDED')
-        }
+        if (!cancelled) transition('TTS_ENDED')
       })
       .catch(() => {
-        if (!cancelled) {
-          setDisplayedQuestion(text)
-          if (typingTimerRef.current) clearInterval(typingTimerRef.current)
-          transition('TTS_ENDED')
-        }
+        if (!cancelled) transition('TTS_ENDED')
       })
 
     return () => {
       cancelled = true
-      if (typingTimerRef.current) clearInterval(typingTimerRef.current)
     }
   }, [state, getLastAssistantMessage, transition])
 
@@ -241,15 +213,21 @@ export function VoiceOverlay({
 
         {/* Question card */}
         <div className="mb-4 rounded-xl border border-brand-border bg-brand-bg-warm p-4">
-          <p className="font-body text-body text-brand-text">
-            {(state === 'ai_speaking' ? displayedQuestion : currentQuestion) || 'Waiting for assistant...'}
-          </p>
-          {state === 'ai_speaking' && (
-            <div className="mt-2 flex items-center gap-1">
-              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-brand-accent-coral [animation-delay:0ms]" />
-              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-brand-accent-coral [animation-delay:150ms]" />
-              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-brand-accent-coral [animation-delay:300ms]" />
+          {state === 'ai_speaking' ? (
+            <div className="flex flex-col items-center gap-3 py-4">
+              <div className="flex items-end gap-1">
+                <span className="inline-block h-3 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:0ms]" />
+                <span className="inline-block h-5 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:100ms]" />
+                <span className="inline-block h-7 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:200ms]" />
+                <span className="inline-block h-5 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:300ms]" />
+                <span className="inline-block h-3 w-1 animate-pulse rounded-full bg-brand-accent-coral [animation-delay:400ms]" />
+              </div>
+              <p className="font-body text-body-sm text-brand-text-muted">Listening...</p>
             </div>
+          ) : (
+            <p className="font-body text-body text-brand-text">
+              {currentQuestion || 'Waiting for assistant...'}
+            </p>
           )}
         </div>
 
@@ -312,7 +290,6 @@ export function VoiceOverlay({
             onClick={() => {
               ttsRef.current.stop()
               if (sttRef.current) { sttRef.current.stop(); sttRef.current = null }
-              if (typingTimerRef.current) clearInterval(typingTimerRef.current)
               onClose()
               onEndSession()
             }}
