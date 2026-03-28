@@ -47,7 +47,7 @@ export function ChatWindow({ messages, streamingContent, onSend, isStreaming, sh
         />
       ) : (
         <>
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-6 flex flex-col justify-end">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 md:p-6">
             <div className="space-y-1">
               {messages.map((msg, i) => (
                 <MessageBubble key={i} role={msg.role} content={msg.content} />
