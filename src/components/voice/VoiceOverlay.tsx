@@ -307,12 +307,14 @@ export function VoiceOverlay({
         </p>
 
         {/* Footer */}
-        <button
-          onClick={onEndSession}
-          className="rounded-lg border border-brand-border px-6 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
-        >
-          I'm Done
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={onEndSession}
+            className="rounded-lg border border-brand-border px-6 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
+          >
+            I'm Done
+          </button>
+        </div>
       </div>
     </div>
   )
