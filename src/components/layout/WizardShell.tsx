@@ -21,13 +21,13 @@ export function WizardShell() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/')
+      navigate('/dashboard')
     }
   }, [authLoading, user, navigate])
 
   useEffect(() => {
     if (!isLoading && !session) {
-      navigate('/')
+      navigate('/dashboard')
     }
   }, [isLoading, session, navigate])
 

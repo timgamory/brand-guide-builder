@@ -9,7 +9,7 @@ export function AuthCallback() {
     // Supabase JS SDK automatically picks up the token from the URL hash
     // and exchanges it for a session. We just need to wait for that to complete.
     supabase.auth.getSession().then(() => {
-      navigate('/', { replace: true })
+      navigate('/dashboard', { replace: true })
     })
   }, [navigate])
 
