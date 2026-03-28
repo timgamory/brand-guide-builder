@@ -167,9 +167,10 @@ export function WizardSection() {
     }
   }, [session, sectionId, messages, addMessage, setStreaming, updateSectionStatus, isIntern])
 
-  const handleEndVoiceSession = useCallback(async () => {
-    await handleSend('Please wrap up and generate a section review based on what we have discussed so far.')
-  }, [handleSend])
+  const handleEndVoiceSession = useCallback(() => {
+    setVoiceActive(false)
+    navigate('/dashboard')
+  }, [navigate])
 
   const handleApprove = useCallback(async (draft: string) => {
     if (!sectionId) return

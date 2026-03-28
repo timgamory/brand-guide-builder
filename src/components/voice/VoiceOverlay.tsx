@@ -204,8 +204,8 @@ export function VoiceOverlay({
   const micConfig = getMicConfig(state)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-lg rounded-2xl border border-brand-border bg-brand-bg p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-lg rounded-2xl border border-brand-border bg-brand-bg p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <h2 className="mb-4 text-center font-heading text-xl text-brand-text">
           Voice Mode
@@ -235,7 +235,7 @@ export function VoiceOverlay({
 
         {/* Live transcription */}
         {(state === 'user_speaking' || state === 'processing') && interimText && (
-          <div className="mb-4 rounded-lg border border-brand-accent-sage bg-brand-bg p-3">
+          <div className="mb-4 max-h-32 overflow-y-auto rounded-lg border border-brand-accent-sage bg-brand-bg p-3">
             <p className="font-body text-body-sm text-brand-text-secondary italic">
               {interimText}
             </p>
@@ -287,17 +287,22 @@ export function VoiceOverlay({
         </p>
 
         {/* Footer */}
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-3">
           <button
             onClick={() => {
               ttsRef.current.stop()
               if (sttRef.current) { sttRef.current.stop(); sttRef.current = null }
               onClose()
-              onEndSession()
             }}
-            className="rounded-lg border border-brand-border px-6 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
+            className="rounded-lg border border-brand-border px-5 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
           >
-            I'm Done
+            Back to Text
+          </button>
+          <button
+            onClick={onEndSession}
+            className="rounded-lg border border-brand-border px-5 py-2 font-body text-body-sm text-brand-text-secondary hover:bg-brand-bg-warm"
+          >
+            Save & Exit
           </button>
         </div>
       </div>
