@@ -71,11 +71,11 @@ export function VoiceOverlay({
     setCurrentQuestion(text)
     setDisplayedQuestion('')
 
-    // Word-by-word typing effect
+    // Word-by-word typing effect synced to TTS speed
+    // ElevenLabs speaks ~140 words per minute = ~430ms per word
     const words = text.split(/\s+/)
     let wordIndex = 0
-    // Estimate ~150 words per minute for TTS, spread words across duration
-    const msPerWord = Math.max(80, Math.min(200, (text.length * 4) / words.length))
+    const msPerWord = 430
     if (typingTimerRef.current) clearInterval(typingTimerRef.current)
     typingTimerRef.current = setInterval(() => {
       wordIndex++
