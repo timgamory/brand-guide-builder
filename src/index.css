@@ -139,6 +139,19 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@keyframes pulse-shadow {
+  0%, 100% {
+    box-shadow: 0 10px 15px -3px rgba(224, 122, 95, 0.3), 0 4px 6px -4px rgba(224, 122, 95, 0.2);
+  }
+  50% {
+    box-shadow: 0 10px 25px -3px rgba(224, 122, 95, 0.5), 0 4px 10px -4px rgba(224, 122, 95, 0.35);
+  }
+}
+
+.animate-pulse-shadow {
+  animation: pulse-shadow 2s ease-in-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

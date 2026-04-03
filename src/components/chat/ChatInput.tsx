@@ -1,9 +1,23 @@
 import { useState, useRef, useEffect } from 'react'
 
-export function ChatInput({ onSend, disabled, quickChips }: {
+type PreferredMode = 'undecided' | 'voice' | 'text'
+
+function MicIcon({ className }: { className: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2" />
+    </svg>
+  )
+}
+
+export function ChatInput({ onSend, disabled, quickChips, showVoiceButton, onVoiceStart, preferredMode = 'text' }: {
   onSend: (message: string) => void
   disabled: boolean
   quickChips?: string[]
+  showVoiceButton?: boolean
+  onVoiceStart?: () => void
+  preferredMode?: PreferredMode
 }) {
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -40,6 +54,8 @@ export function ChatInput({ onSend, disabled, quickChips }: {
     }
   }
 
+  const isVoiceMode = preferredMode === 'voice' && showVoiceButton && onVoiceStart
+
   return (
     <div className="border-t border-brand-border bg-white p-3 md:p-4">
       {quickChips && quickChips.length > 0 && (
@@ -56,25 +72,68 @@ export function ChatInput({ onSend, disabled, quickChips }: {
           ))}
         </div>
       )}
-      <div className="flex gap-3 items-end">
-        <textarea
-          ref={textareaRef}
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your answer..."
-          disabled={disabled}
-          rows={1}
-          className="flex-1 resize-none overflow-hidden px-4 py-3 rounded-xl border border-brand-border-dark bg-brand-bg text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all disabled:opacity-40 font-body"
-        />
-        <button
-          onClick={handleSubmit}
-          disabled={disabled || !text.trim()}
-          className="px-5 py-3 rounded-xl bg-brand-primary text-white font-medium text-sm hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-        >
-          Send
-        </button>
-      </div>
+
+      {isVoiceMode ? (
+        /* Voice-prominent layout: big mic on left, compact text on right */
+        <div className="flex gap-2 items-end">
+          <button
+            onClick={onVoiceStart}
+            className="w-14 h-14 rounded-full bg-brand-accent-coral text-white shadow-md shrink-0 flex items-center justify-center hover:bg-brand-accent-coral/90 transition-colors"
+            aria-label="Start voice input"
+          >
+            <MicIcon className="h-6 w-6" />
+          </button>
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="or type here..."
+            disabled={disabled}
+            rows={1}
+            className="flex-1 resize-none overflow-hidden px-4 py-3 rounded-xl border border-brand-border-dark bg-brand-bg text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all disabled:opacity-40 font-body"
+          />
+          {text.trim() && (
+            <button
+              onClick={handleSubmit}
+              disabled={disabled}
+              className="px-5 py-3 rounded-xl bg-brand-primary text-white font-medium text-sm hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            >
+              Send
+            </button>
+          )}
+        </div>
+      ) : (
+        /* Text-prominent layout: textarea primary, mic button secondary */
+        <div className="flex gap-2 items-end">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your answer..."
+            disabled={disabled}
+            rows={1}
+            className="flex-1 resize-none overflow-hidden px-4 py-3 rounded-xl border border-brand-border-dark bg-brand-bg text-brand-text text-body outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all disabled:opacity-40 font-body"
+          />
+          {showVoiceButton && onVoiceStart && (
+            <button
+              onClick={onVoiceStart}
+              className="w-12 h-12 rounded-full border-2 border-brand-accent-coral text-brand-accent-coral hover:bg-brand-accent-coral/10 transition-colors shrink-0 flex items-center justify-center"
+              aria-label="Start voice input"
+            >
+              <MicIcon className="h-5 w-5" />
+            </button>
+          )}
+          <button
+            onClick={handleSubmit}
+            disabled={disabled || !text.trim()}
+            className="px-5 py-3 rounded-xl bg-brand-primary text-white font-medium text-sm hover:bg-brand-text-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          >
+            Send
+          </button>
+        </div>
+      )}
     </div>
   )
 }

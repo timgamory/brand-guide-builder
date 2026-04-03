@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { SECTIONS, getSection, getSectionIndex, ALL_SECTION_IDS } from '../sections'
+import { SECTIONS, getSection, getSectionIndex, getNextSection, ALL_SECTION_IDS } from '../sections'
 
 describe('sections', () => {
   it('has 11 sections', () => {
@@ -40,5 +40,22 @@ describe('sections', () => {
 
   it('ALL_SECTION_IDS matches section order', () => {
     expect(ALL_SECTION_IDS).toEqual(SECTIONS.map(s => s.id))
+  })
+})
+
+describe('getNextSection', () => {
+  it('returns the next section after a given id', () => {
+    const next = getNextSection('basics')
+    expect(next).toEqual({ id: 'story', title: 'Your Story' })
+  })
+
+  it('returns null for the last section', () => {
+    const next = getNextSection('photography')
+    expect(next).toBeNull()
+  })
+
+  it('returns null for unknown section id', () => {
+    const next = getNextSection('nonexistent')
+    expect(next).toBeNull()
   })
 })
